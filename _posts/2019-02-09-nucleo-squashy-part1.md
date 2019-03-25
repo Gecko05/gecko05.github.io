@@ -44,7 +44,7 @@ While my first objective was to develop a game for a Nucleo board, I intend to c
 
 ![Hardware](/assets/images/squashyNucleo.jpg){:class="img-responsive" width="400px"}
 
-For the hardware I'm simply using two push buttons, one piezoelectric buzzer and the cheap mono-color OLED Display SSD1306 which has a screen of 64x128 pixels. However, once I started testing stuff I noticed that my display may be broken because it doesn't show every other row of pixels. This creates some issues because small sprites of around 6x6 won't show properly and they might become illegible. Once I get my hands on a new RGB OLED Display I'll update the project to use a limited palette of 16 colors like the old times.
+For the hardware I'm simply using two push buttons, one piezoelectric buzzer and the cheap mono-color OLED Display SSD1306 which has a screen of 64x128 pixels. However, once I started testing stuff I noticed that my display might be broken because it doesn't show display other row of pixels. This creates some issues because small sprites of around 6x6 won't show properly and they might become illegible. Once I get my hands on a new RGB OLED Display I'll update the project to use a limited palette of 16 colors like the old times.
 
 I didn't develop the driver for my SSD1306 from scratch, instead I cloned this simple [library](https://github.com/4ilo/ssd1306-stm32HAL) from Olivier Van den Eede which already uses STM32 HAL and contains pretty much all the abstraction I needed to build upon.
 
