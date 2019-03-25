@@ -67,7 +67,7 @@ As far as I know, any RTOS can work under the concept of preemptive tasks, which
 
 Once I had the project ready I moved on to developing my three main functions. Init() was pretty straightforward, only needed to include initialization of variables, hardware, etc. While Draw() and Update() were independent tasks.
 
-The basic drawable game element is determined by the structure *BodyNode*. *BodyNode* contains pretty much all the necessary information to know where every object should be drawn, the details of the sprite it is using and a flag to know whether the program should hide the sprite or not.
+The basic drawable game element is defined by the structure *BodyNode*. *BodyNode* contains pretty much all the necessary information to know where every object should be drawn, the details of the sprite it is using and a flag to know whether the program should hide the sprite or not.
 
 ![Heart sprite in bits](/assets/images/spriteHeart.png){:class="img-responsive" width="200px"}
 ![Heart sprite intended](/assets/images/spriteHeartPico.png){:class="img-responsive" width="175"}
