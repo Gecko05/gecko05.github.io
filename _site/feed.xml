@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.5">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2019-03-24T18:09:32-06:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">The Blue Wire</title><subtitle>Here you will find blog entries, tutorials and descriptions of projects about embedded systems programming.</subtitle><entry><title type="html">PICO8-like Squashy game in a broken OLED Display</title><link href="http://localhost:4000/2019/02/09/nucleo-squashy-part1.html" rel="alternate" type="text/html" title="PICO8-like Squashy game in a broken OLED Display" /><published>2019-02-09T00:00:00-06:00</published><updated>2019-02-09T00:00:00-06:00</updated><id>http://localhost:4000/2019/02/09/nucleo-squashy-part1</id><content type="html" xml:base="http://localhost:4000/2019/02/09/nucleo-squashy-part1.html">&lt;p&gt;For the first entry of this page I’ll talk about the process of developing a simple Squashy game for one of my favorite ST Boards, the &lt;a href=&quot;https://www.st.com/en/evaluation-tools/nucleo-l152re.html&quot;&gt;Nucleo L152RE&lt;/a&gt;, using &lt;a href=&quot;https://www.freertos.org/&quot;&gt;FreeRTOS&lt;/a&gt;, C language programming and &lt;a href=&quot;https://www.st.com/en/development-tools/sw4stm32.html&quot;&gt;SW4STM32&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;The inspiration for this project comes from the very first game example from the &lt;a href=&quot;https://sectordub.itch.io/pico-8-fanzine-1&quot;&gt;PICO-8 Zine  #1&lt;/a&gt; for the &lt;a href=&quot;https://www.lexaloffle.com/pico-8.php&quot;&gt;PICO8&lt;/a&gt; Lua based fantasy console. The first article of the zine guides you through the development of a simple Squashy game, which has pretty much the basic mechanics of a Breakout game.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/squashyPico.png&quot; alt=&quot;Squashy in PICO8&quot; class=&quot;img-responsive&quot; width=&quot;400px&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The &lt;a href=&quot;https://www.lexaloffle.com/bbs/?cat=7&amp;amp;carts_tab=1#sub=2&amp;amp;mode=carts&amp;amp;search=squashy&quot;&gt;game&lt;/a&gt; is pretty straightforward, there’s a ball that bounces between the top, left and right edges of the screen, and a pad which you take control of. The sole objective is to keep bouncing the ball for as long as you can, every time the ball bounces you get +1 in your Score and if the ball touches the bottom of the screen you’ll lose a life.&lt;/p&gt;
+
+&lt;div class=&quot;embed-container&quot;&gt;
+  &lt;iframe src=&quot;https://www.youtube.com/embed/eNKy-4qQbHk&quot; width=&quot;500&quot; height=&quot;290&quot; frameborder=&quot;0&quot; allowfullscreen=&quot;&quot;&gt;
+  &lt;/iframe&gt;
+&lt;/div&gt;
+
+&lt;p&gt;While my first objective was to develop a game for a Nucleo board, I intend to create something resembling a game engine for custom hardware that enables multiplayer options via Bluetooth between one or more console devices.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/expected.png&quot; alt=&quot;Expected result&quot; class=&quot;img-responsive&quot; width=&quot;400px&quot; caption=&quot;Squashy in PICO8&quot; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;features&quot;&gt;Features&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Speed based controls&lt;/li&gt;
+  &lt;li&gt;Can restart the game&lt;/li&gt;
+  &lt;li&gt;Score&lt;/li&gt;
+  &lt;li&gt;Lives system&lt;/li&gt;
+  &lt;li&gt;Bounce beep&lt;/li&gt;
+  &lt;li&gt;Bugs&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;whats-missing&quot;&gt;What’s missing&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Good OLED display&lt;/li&gt;
+  &lt;li&gt;PWM notes for the buzzer&lt;/li&gt;
+  &lt;li&gt;Restart position&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;hardware&quot;&gt;Hardware&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Nucleo L152RE&lt;/li&gt;
+  &lt;li&gt;2 Pushbuttons&lt;/li&gt;
+  &lt;li&gt;OLED screen SSD1306 with I2C&lt;/li&gt;
+  &lt;li&gt;Piezo buzzer&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/squashyNucleo.jpg&quot; alt=&quot;Hardware&quot; class=&quot;img-responsive&quot; width=&quot;400px&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;For the hardware I’m simply using two push buttons, one piezoelectric buzzer and the cheap mono-color OLED Display SSD1306 which has a screen of 64x128 pixels. However, once I started testing stuff I noticed that my display may be broken because it doesn’t show every other row of pixels. This creates some issues because small sprites of around 6x6 won’t show properly and they might become illegible. Once I get my hands on a new RGB OLED Display I’ll update the project to use a limited palette of 16 colors like the old times.&lt;/p&gt;
+
+&lt;p&gt;I didn’t develop the driver for my SSD1306 from scratch, instead I cloned this simple &lt;a href=&quot;https://github.com/4ilo/ssd1306-stm32HAL&quot;&gt;library&lt;/a&gt; from Olivier Van den Eede which already uses STM32 HAL and contains pretty much all the abstraction I needed to build upon.&lt;/p&gt;
+
+&lt;h1 id=&quot;structure&quot;&gt;Structure&lt;/h1&gt;
+
+&lt;p&gt;First of all, PICO8 games need three fundamental functions; Init, Update and Draw.
+Init(), as its name implies, initializes stuff.
+Update() is a function that runs continuously in which you execute all calculations related to movement, hits, score, etc.
+Draw() is the function that paints all the stuff on the screen.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/picoBasic.png&quot; alt=&quot;Pico8 basic structure&quot; class=&quot;img-responsive&quot; width=&quot;300px&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/picoInNucleo.png&quot; alt=&quot;Picolike tasks&quot; class=&quot;img-responsive&quot; width=&quot;300px&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The first thing I needed was a system in which I could run both Update and Draw simultaneously, since it’s a more scalable approach than running one function before the other. So taking advantage of the CubeMX tool from STM32 I created a blank project with Middleware FreeRTOS enabled, which is a small Real Time Operating System that can be run on almost any 32-bit Microcontroller.&lt;/p&gt;
+
+&lt;p&gt;As far as I know, any RTOS can work under the concept of preemptive tasks, which are basically looped functions that run “simultaneously”. For this project it means that every time fraction Draw() will do stuff then the program will swap to the Update() function and run for another time fraction, then swap back to Draw() and so on until the end of times(or until the MCU turns off) giving the illusion of running simultaneous tasks.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/preemption.jpg&quot; alt=&quot;Preemptive Tasks&quot; class=&quot;img-responsive&quot; width=&quot;400px&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Once I had the project ready I moved on to developing my three main functions. Init() was pretty straightforward, only needed to include initialization of variables, hardware, etc. While Draw() and Update() were independent tasks.&lt;/p&gt;
+
+&lt;p&gt;The basic drawable game element is determined by the structure &lt;em&gt;BodyNode&lt;/em&gt;. &lt;em&gt;BodyNode&lt;/em&gt; contains pretty much all the necessary information to know where every object should be drawn, the details of the sprite it is using and a flag to know whether the program should hide the sprite or not.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/spriteHeart.png&quot; alt=&quot;Heart sprite in bits&quot; class=&quot;img-responsive&quot; width=&quot;200px&quot; /&gt;
+&lt;img src=&quot;/assets/images/spriteHeartPico.png&quot; alt=&quot;Heart sprite intended&quot; class=&quot;img-responsive&quot; width=&quot;175&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The &lt;em&gt;Sprite&lt;/em&gt; type is another structure that holds an array of 16bit unsigned integers(&lt;em&gt;spriteArray&lt;/em&gt;) with the monochromatic pixel information. If a pixel must be drawn then there’s a 1, if not, a 0. It also holds the width and height dimensions in pixels for the sprite so the function that draws every sprite knows how to iterate over the sprite array.&lt;/p&gt;
+
+&lt;p&gt;Feel free to peek around, pretty much every 32bit Nucleo Board could run this game, just set up the peripherals using the STM32CubeMx Tool if you’re not using a L152RE.&lt;/p&gt;
+
+&lt;p&gt;You can find the project’s repository &lt;a href=&quot;https://github.com/Gecko05/NucleoSquashy&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;</content><author><name>Jaime Centeno</name></author><summary type="html">For the first entry of this page I’ll talk about the process of developing a simple Squashy game for one of my favorite ST Boards, the Nucleo L152RE, using FreeRTOS, C language programming and SW4STM32.</summary></entry></feed>
