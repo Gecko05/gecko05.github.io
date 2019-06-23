@@ -1,4 +1,62 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.5">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2019-06-23T15:07:34-05:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">The Blue Wire</title><subtitle>Here you will find blog entries, tutorials and descriptions of projects about embedded systems programming.</subtitle><entry><title type="html">PICO8-like Squashy game in a broken OLED Display</title><link href="http://localhost:4000/2019/02/09/nucleo-squashy-part1.html" rel="alternate" type="text/html" title="PICO8-like Squashy game in a broken OLED Display" /><published>2019-02-09T00:00:00-06:00</published><updated>2019-02-09T00:00:00-06:00</updated><id>http://localhost:4000/2019/02/09/nucleo-squashy-part1</id><content type="html" xml:base="http://localhost:4000/2019/02/09/nucleo-squashy-part1.html">&lt;p&gt;For the first entry of this page I’ll talk about the process of developing a simple Squashy game for one of my favorite ST Boards, the &lt;a href=&quot;https://www.st.com/en/evaluation-tools/nucleo-l152re.html&quot;&gt;Nucleo L152RE&lt;/a&gt;, using &lt;a href=&quot;https://www.freertos.org/&quot;&gt;FreeRTOS&lt;/a&gt;, C language programming and &lt;a href=&quot;https://www.st.com/en/development-tools/sw4stm32.html&quot;&gt;SW4STM32&lt;/a&gt;.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.5">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2019-06-23T15:12:17-05:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">The Blue Wire</title><subtitle>Here you will find blog entries, tutorials and descriptions of projects about embedded systems programming.</subtitle><entry><title type="html">Using an RGB display with embedded C</title><link href="http://localhost:4000/2019/06/23/ssd1351-driver.html" rel="alternate" type="text/html" title="Using an RGB display with embedded C" /><published>2019-06-23T00:00:00-05:00</published><updated>2019-06-23T00:00:00-05:00</updated><id>http://localhost:4000/2019/06/23/ssd1351-driver</id><content type="html" xml:base="http://localhost:4000/2019/06/23/ssd1351-driver.html">&lt;p&gt;Two months ago I got a new 128x128 OLED Display to play with, this time it was the &lt;a href=&quot;&quot;&gt;SSD1351&lt;/a&gt;. This OLED display, although limited, supports RGB colors which has been very exciting as it’s my first time working with one of those. I got this display from ebay for around $17, a relatively cheap price if we consider its potential.&lt;/p&gt;
+
+&lt;p&gt;For this display I decided to create my own driver library, inspired by the library I used for the SSD1306 in the &lt;a href=&quot;https://gecko05.github.io/2019/02/09/nucleo-squashy-part1.html&quot;&gt;previous entry&lt;/a&gt;, with subtle support for printing and graphics display, like rectangles, circles and lines.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/ssd1351_print.jpg&quot; alt=&quot;Printing demo&quot; class=&quot;img-responsive&quot; width=&quot;400px&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;I’ll describe the basics of the development for this library for everyone curious about rudimentary graphics programming. I’m also using the same development board as before, the &lt;em&gt;Nucleo L152RE&lt;/em&gt; and &lt;em&gt;SW4STM32&lt;/em&gt; as the IDE, however, this library was adjusted to be of generic use in C regardless of the hardware you’re using. Some configuration is needed inside the &lt;em&gt;ssd1351.h&lt;/em&gt; header file though.&lt;/p&gt;
+
+&lt;h1 id=&quot;relevant-hardware-information&quot;&gt;Relevant hardware information&lt;/h1&gt;
+
+&lt;p&gt;As a low level programmer it’s important to look for the data-sheet and specifications of the devices one is programming for. So for prototyping, the relevant information we can get from the data-sheet is the following:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;SPI communication(3 or 4 wire)&lt;/li&gt;
+  &lt;li&gt;2.4V – 3.5V Power supply&lt;/li&gt;
+  &lt;li&gt;128x128x18 SRAM Display Buffer (more on this later)&lt;/li&gt;
+  &lt;li&gt;262k color depth&lt;/li&gt;
+  &lt;li&gt;Data/Command Pin&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/ssd1351.jpg&quot; alt=&quot;SSD1351&quot; class=&quot;img-responsive&quot; width=&quot;400px&quot; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;start-your-engines&quot;&gt;Start your engines&lt;/h1&gt;
+
+&lt;p&gt;Personally speaking, initialization process is the toughest stage of the development of a driver library, especially if it’s the first time you’re working with the hardware. There’s a lot of information you need to extract from the data-sheet like configuration options, communication modes, working modes, timings, and initialization routines. It’s also the time to create your long list of command and constant definitions, hardware abstraction layer definitions, and more. On top of that, add the excitement of wanting to get your device running as soon as possible and see all that magical stuff you can do with it.&lt;/p&gt;
+
+&lt;p&gt;Once the display turns on and it’s ready to receive data, it’s necessary to unlock the majority of the commands via a special command, then we’re ready to send all the configuration stuff we want to change from the original reset values.&lt;/p&gt;
+
+&lt;h1 id=&quot;communication-is-key&quot;&gt;Communication is key&lt;/h1&gt;
+
+&lt;p&gt;The way to tell the display what to do is based on commands and data transmission. For 3-Wire SPI we only need CS, MOSI and MISO pins as well as an extra pin called C/D to tell the display whether we’re sending a data byte or a command byte. To send a command the C/D needs to be in logical low and to send data it needs to be in logical high.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/gifs/ssd1351_fail.gif&quot; alt=&quot;Color modes&quot; class=&quot;img-responsive&quot; width=&quot;200px&quot; caption=&quot;Oops&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Some commands are followed by one or more bytes of data, and some of them are not, everything is described on the data-sheet. For example, to send the starting and ending row numbers as 0 and 127, we first send the 75h command byte followed by 00h and 7Fh data bytes.
+Inside the library, the communication has been abstracted under three “wrapper” functions that every user needs to link to their own HAL. One function is designed to send a command byte, another one to send a data byte and a third one to send a buffer of a specified length.&lt;/p&gt;
+
+&lt;h1 id=&quot;the-display-ram&quot;&gt;The display RAM&lt;/h1&gt;
+
+&lt;p&gt;The display RAM is the most interesting part of the display because it’s where the fun happens. This RAM works as a long array of bytes where each pixel has a total of 18 bits to store the intensity of each color(red, green and blue), so each color is represented by a value of 6 bits. Now, 18 bits is kind of a large number to handle, so to make things easier both in storage and communication, the display offers a variety of color modes. Each color mode has a specified data length to work with, the lower the length the less colors we can use.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/color_modes.png&quot; alt=&quot;Color modes&quot; class=&quot;img-responsive&quot; width=&quot;750px&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The best approach to make changes in the display is to perform all the color changes in a local RAM array inside the MCU and, when we’re ready, send the “Write RAM” command followed by all the bytes we’re using to change each pixel’s color. This way we avoid excessive and unnecessary writing to the SPI port which also reduces the time needed to perform complex drawings onto the screen.&lt;/p&gt;
+
+&lt;p&gt;For the library I decided to use the lowest color depth available as it matches quite well the 8-bit SPI communication and it makes byte handling easier. This means we only have to use 5, 6 and 5 bytes for reed, green and blue colors respectively, adding to a total of 2 bytes per pixel. There’s already a function to perform the conversion from rgb values to a single integer of 16 bits.&lt;/p&gt;
+
+&lt;h1 id=&quot;psychedelic-stuff&quot;&gt;Psychedelic stuff&lt;/h1&gt;
+
+&lt;p&gt;With all these tools, we can start writing the fun graphics stuff that involves all the algorithms to draw lines, polygons, circles, and character printing. I gotta admit that other than the rectangles, I didn’t come to these algorithms by my own, there are already optimized algorithms to draw &lt;a href=&quot;https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm&quot;&gt;pixelated lines&lt;/a&gt; and &lt;a href=&quot;https://en.wikipedia.org/wiki/Midpoint_circle_algorithm&quot;&gt;circles&lt;/a&gt;. Currently there are functions to draw individual pixels, draw lines, rectangles, filled rectangles, circles, filled circles, and character printing.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/gifs/ssd1351_circles.gif&quot; alt=&quot;Circles demo&quot; class=&quot;img-responsive&quot; width=&quot;400px&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The character printing stuff is heavily based on Olivier van Ede’s “ssd1306-stm32HAL”, which is a library for a mono-chromatic OLED display that I used on my previous project. Basically all the fonts files stayed the same except for a few adjustments in readability and generic usage. The formatted printing is a limited feature, it only supports three data types: strings, characters and signed 8-bit integers, as well as the escape character ‘\n’.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/gifs/ssd1351_lines.gif&quot; alt=&quot;Lines demo&quot; class=&quot;img-responsive&quot; width=&quot;400px&quot; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;building-upon&quot;&gt;Building upon&lt;/h1&gt;
+
+&lt;p&gt;The next step is going back to the Breakout-like game and develop a way to load sprites from a file system. Then maybe even extending to a graphics library to something more sophisticated as well as importing Lua scripts into a STM32 microcontroller to make simple games that use this library. You can find three demos listed in the main readme file of the repository. As always, if you’re curious then feel free to fork and test this library into your own favorite micro-controller.&lt;/p&gt;</content><author><name>Jaime Centeno</name></author><summary type="html">Two months ago I got a new 128x128 OLED Display to play with, this time it was the SSD1351. This OLED display, although limited, supports RGB colors which has been very exciting as it’s my first time working with one of those. I got this display from ebay for around $17, a relatively cheap price if we consider its potential.</summary></entry><entry><title type="html">PICO8-like Squashy game in a broken OLED Display</title><link href="http://localhost:4000/2019/02/09/nucleo-squashy-part1.html" rel="alternate" type="text/html" title="PICO8-like Squashy game in a broken OLED Display" /><published>2019-02-09T00:00:00-06:00</published><updated>2019-02-09T00:00:00-06:00</updated><id>http://localhost:4000/2019/02/09/nucleo-squashy-part1</id><content type="html" xml:base="http://localhost:4000/2019/02/09/nucleo-squashy-part1.html">&lt;p&gt;For the first entry of this page I’ll talk about the process of developing a simple Squashy game for one of my favorite ST Boards, the &lt;a href=&quot;https://www.st.com/en/evaluation-tools/nucleo-l152re.html&quot;&gt;Nucleo L152RE&lt;/a&gt;, using &lt;a href=&quot;https://www.freertos.org/&quot;&gt;FreeRTOS&lt;/a&gt;, C language programming and &lt;a href=&quot;https://www.st.com/en/development-tools/sw4stm32.html&quot;&gt;SW4STM32&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;The inspiration for this project comes from the very first game example from the &lt;a href=&quot;https://sectordub.itch.io/pico-8-fanzine-1&quot;&gt;PICO-8 Zine  #1&lt;/a&gt; for the &lt;a href=&quot;https://www.lexaloffle.com/pico-8.php&quot;&gt;PICO8&lt;/a&gt; Lua based fantasy console. The first article of the zine guides you through the development of a simple Squashy game, which has pretty much the basic mechanics of a Breakout game.&lt;/p&gt;
 
@@ -77,62 +135,4 @@ Draw() is the function that paints all the stuff on the screen.&lt;/p&gt;
 
 &lt;p&gt;Feel free to peek around, pretty much every 32bit Nucleo Board could run this game, just set up the peripherals using the STM32CubeMx Tool if you’re not using a L152RE.&lt;/p&gt;
 
-&lt;p&gt;You can find the project’s repository &lt;a href=&quot;https://github.com/Gecko05/NucleoSquashy&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;</content><author><name>Jaime Centeno</name></author><summary type="html">For the first entry of this page I’ll talk about the process of developing a simple Squashy game for one of my favorite ST Boards, the Nucleo L152RE, using FreeRTOS, C language programming and SW4STM32.</summary></entry><entry><title type="html">Using an RGB display with embedded C</title><link href="http://localhost:4000/2019/02/09/ssd1351-driver.html" rel="alternate" type="text/html" title="Using an RGB display with embedded C" /><published>2019-02-09T00:00:00-06:00</published><updated>2019-02-09T00:00:00-06:00</updated><id>http://localhost:4000/2019/02/09/ssd1351-driver</id><content type="html" xml:base="http://localhost:4000/2019/02/09/ssd1351-driver.html">&lt;p&gt;Two months ago I got a new 128x128 OLED Display to play with, this time it was the &lt;a href=&quot;&quot;&gt;SSD1351&lt;/a&gt;. This OLED display, although limited, supports RGB colors which has been very exciting as it’s my first time working with one of those. I got this display from ebay for around $17, a relatively cheap price if we consider its potential.&lt;/p&gt;
-
-&lt;p&gt;For this display I decided to create my own driver library, inspired by the library I used for the SSD1306 in the &lt;a href=&quot;https://gecko05.github.io/2019/02/09/nucleo-squashy-part1.html&quot;&gt;previous entry&lt;/a&gt;, with subtle support for printing and graphics display, like rectangles, circles and lines.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/assets/images/ssd1351_print.jpg&quot; alt=&quot;Printing demo&quot; class=&quot;img-responsive&quot; width=&quot;400px&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;I’ll describe the basics of the development for this library for everyone curious about rudimentary graphics programming. I’m also using the same development board as before, the &lt;em&gt;Nucleo L152RE&lt;/em&gt; and &lt;em&gt;SW4STM32&lt;/em&gt; as the IDE, however, this library was adjusted to be of generic use in C regardless of the hardware you’re using. Some configuration is needed inside the &lt;em&gt;ssd1351.h&lt;/em&gt; header file though.&lt;/p&gt;
-
-&lt;h1 id=&quot;relevant-hardware-information&quot;&gt;Relevant hardware information&lt;/h1&gt;
-
-&lt;p&gt;As a low level programmer it’s important to look for the data-sheet and specifications of the devices one is programming for. So for prototyping, the relevant information we can get from the data-sheet is the following:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;SPI communication(3 or 4 wire)&lt;/li&gt;
-  &lt;li&gt;2.4V – 3.5V Power supply&lt;/li&gt;
-  &lt;li&gt;128x128x18 SRAM Display Buffer (more on this later)&lt;/li&gt;
-  &lt;li&gt;262k color depth&lt;/li&gt;
-  &lt;li&gt;Data/Command Pin&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;img src=&quot;/assets/images/ssd1351.jpg&quot; alt=&quot;SSD1351&quot; class=&quot;img-responsive&quot; width=&quot;400px&quot; /&gt;&lt;/p&gt;
-
-&lt;h1 id=&quot;start-your-engines&quot;&gt;Start your engines&lt;/h1&gt;
-
-&lt;p&gt;Personally speaking, initialization process is the toughest stage of the development of a driver library, especially if it’s the first time you’re working with the hardware. There’s a lot of information you need to extract from the data-sheet like configuration options, communication modes, working modes, timings, and initialization routines. It’s also the time to create your long list of command and constant definitions, hardware abstraction layer definitions, and more. On top of that, add the excitement of wanting to get your device running as soon as possible and see all that magical stuff you can do with it.&lt;/p&gt;
-
-&lt;p&gt;Once the display turns on and it’s ready to receive data, it’s necessary to unlock the majority of the commands via a special command, then we’re ready to send all the configuration stuff we want to change from the original reset values.&lt;/p&gt;
-
-&lt;h1 id=&quot;communication-is-key&quot;&gt;Communication is key&lt;/h1&gt;
-
-&lt;p&gt;The way to tell the display what to do is based on commands and data transmission. For 3-Wire SPI we only need CS, MOSI and MISO pins as well as an extra pin called C/D to tell the display whether we’re sending a data byte or a command byte. To send a command the C/D needs to be in logical low and to send data it needs to be in logical high.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/assets/gifs/ssd1351_fail.gif&quot; alt=&quot;Color modes&quot; class=&quot;img-responsive&quot; width=&quot;200px&quot; caption=&quot;Oops&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Some commands are followed by one or more bytes of data, and some of them are not, everything is described on the data-sheet. For example, to send the starting and ending row numbers as 0 and 127, we first send the 75h command byte followed by 00h and 7Fh data bytes.
-Inside the library, the communication has been abstracted under three “wrapper” functions that every user needs to link to their own HAL. One function is designed to send a command byte, another one to send a data byte and a third one to send a buffer of a specified length.&lt;/p&gt;
-
-&lt;h1 id=&quot;the-display-ram&quot;&gt;The display RAM&lt;/h1&gt;
-
-&lt;p&gt;The display RAM is the most interesting part of the display because it’s where the fun happens. This RAM works as a long array of bytes where each pixel has a total of 18 bits to store the intensity of each color(red, green and blue), so each color is represented by a value of 6 bits. Now, 18 bits is kind of a large number to handle, so to make things easier both in storage and communication, the display offers a variety of color modes. Each color mode has a specified data length to work with, the lower the length the less colors we can use.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/assets/images/color_modes.png&quot; alt=&quot;Color modes&quot; class=&quot;img-responsive&quot; width=&quot;750px&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;The best approach to make changes in the display is to perform all the color changes in a local RAM array inside the MCU and, when we’re ready, send the “Write RAM” command followed by all the bytes we’re using to change each pixel’s color. This way we avoid excessive and unnecessary writing to the SPI port which also reduces the time needed to perform complex drawings onto the screen.&lt;/p&gt;
-
-&lt;p&gt;For the library I decided to use the lowest color depth available as it matches quite well the 8-bit SPI communication and it makes byte handling easier. This means we only have to use 5, 6 and 5 bytes for reed, green and blue colors respectively, adding to a total of 2 bytes per pixel. There’s already a function to perform the conversion from rgb values to a single integer of 16 bits.&lt;/p&gt;
-
-&lt;h1 id=&quot;psychedelic-stuff&quot;&gt;Psychedelic stuff&lt;/h1&gt;
-
-&lt;p&gt;With all these tools, we can start writing the fun graphics stuff that involves all the algorithms to draw lines, polygons, circles, and character printing. I gotta admit that other than the rectangles, I didn’t come to these algorithms by my own, there are already optimized algorithms to draw &lt;a href=&quot;https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm&quot;&gt;pixelated lines&lt;/a&gt; and &lt;a href=&quot;https://en.wikipedia.org/wiki/Midpoint_circle_algorithm&quot;&gt;circles&lt;/a&gt;. Currently there are functions to draw individual pixels, draw lines, rectangles, filled rectangles, circles, filled circles, and character printing.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/assets/gifs/ssd1351_circles.gif&quot; alt=&quot;Circles demo&quot; class=&quot;img-responsive&quot; width=&quot;400px&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;The character printing stuff is heavily based on Olivier van Ede’s “ssd1306-stm32HAL”, which is a library for a mono-chromatic OLED display that I used on my previous project. Basically all the fonts files stayed the same except for a few adjustments in readability and generic usage. The formatted printing is a limited feature, it only supports three data types: strings, characters and signed 8-bit integers, as well as the escape character ‘\n’.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/assets/gifs/ssd1351_lines.gif&quot; alt=&quot;Lines demo&quot; class=&quot;img-responsive&quot; width=&quot;400px&quot; /&gt;&lt;/p&gt;
-
-&lt;h1 id=&quot;building-upon&quot;&gt;Building upon&lt;/h1&gt;
-
-&lt;p&gt;The next step is going back to the Breakout-like game and develop a way to load sprites from a file system. Then maybe even extending to a graphics library to something more sophisticated as well as importing Lua scripts into a STM32 microcontroller to make simple games that use this library. You can find three demos listed in the main readme file of the repository. As always, if you’re curious then feel free to fork and test this library into your own favorite micro-controller.&lt;/p&gt;</content><author><name>Jaime Centeno</name></author><summary type="html">Two months ago I got a new 128x128 OLED Display to play with, this time it was the SSD1351. This OLED display, although limited, supports RGB colors which has been very exciting as it’s my first time working with one of those. I got this display from ebay for around $17, a relatively cheap price if we consider its potential.</summary></entry></feed>
+&lt;p&gt;You can find the project’s repository &lt;a href=&quot;https://github.com/Gecko05/NucleoSquashy&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;</content><author><name>Jaime Centeno</name></author><summary type="html">For the first entry of this page I’ll talk about the process of developing a simple Squashy game for one of my favorite ST Boards, the Nucleo L152RE, using FreeRTOS, C language programming and SW4STM32.</summary></entry></feed>
