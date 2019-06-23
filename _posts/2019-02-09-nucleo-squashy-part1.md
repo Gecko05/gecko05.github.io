@@ -10,7 +10,7 @@ For the first entry of this page I'll talk about the process of developing a sim
 
 The inspiration for this project comes from the very first game example from the [PICO-8 Zine  #1](https://sectordub.itch.io/pico-8-fanzine-1) for the [PICO8](https://www.lexaloffle.com/pico-8.php) Lua based fantasy console. The first article of the zine guides you through the development of a simple Squashy game, which has pretty much the basic mechanics of a Breakout game.
 
-![Squashy in PICO8](/assets/images/squashyPico.png){:class="img-responsive" width="400px"}
+![Squashy in PICO8](/assets/images/squashyPico.png){:class="img-responsive" width="400px" image-caption="Oops"}
 
 The [game](https://www.lexaloffle.com/bbs/?cat=7&carts_tab=1#sub=2&mode=carts&search=squashy) is pretty straightforward, there's a ball that bounces between the top, left and right edges of the screen, and a pad which you take control of. The sole objective is to keep bouncing the ball for as long as you can, every time the ball bounces you get +1 in your Score and if the ball touches the bottom of the screen you'll lose a life.
 

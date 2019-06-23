@@ -50,7 +50,7 @@
 
 <p>The inspiration for this project comes from the very first game example from the <a href="https://sectordub.itch.io/pico-8-fanzine-1">PICO-8 Zine  #1</a> for the <a href="https://www.lexaloffle.com/pico-8.php">PICO8</a> Lua based fantasy console. The first article of the zine guides you through the development of a simple Squashy game, which has pretty much the basic mechanics of a Breakout game.</p>
 
-<p><img src="/assets/images/squashyPico.png" alt="Squashy in PICO8" class="img-responsive" width="400px" /></p>
+<p><img src="/assets/images/squashyPico.png" alt="Squashy in PICO8" class="img-responsive" width="400px" image-caption="Oops" /></p>
 
 <p>The <a href="https://www.lexaloffle.com/bbs/?cat=7&amp;carts_tab=1#sub=2&amp;mode=carts&amp;search=squashy">game</a> is pretty straightforward, there’s a ball that bounces between the top, left and right edges of the screen, and a pad which you take control of. The sole objective is to keep bouncing the ball for as long as you can, every time the ball bounces you get +1 in your Score and if the ball touches the bottom of the screen you’ll lose a life.</p>
 
@@ -93,7 +93,7 @@
 
 <p><img src="/assets/images/squashyNucleo.jpg" alt="Hardware" class="img-responsive" width="400px" /></p>
 
-<p>For the hardware I’m simply using two push buttons, one piezoelectric buzzer and the cheap mono-color OLED Display SSD1306 which has a screen of 64x128 pixels. However, once I started testing stuff I noticed that my display may be broken because it doesn’t show every other row of pixels. This creates some issues because small sprites of around 6x6 won’t show properly and they might become illegible. Once I get my hands on a new RGB OLED Display I’ll update the project to use a limited palette of 16 colors like the old times.</p>
+<p>For the hardware I’m simply using two push buttons, one piezoelectric buzzer and the cheap mono-color OLED Display SSD1306 which has a screen of 64x128 pixels. However, once I started testing stuff I noticed that my display might be broken because it doesn’t show display other row of pixels. This creates some issues because small sprites of around 6x6 won’t show properly and they might become illegible. Once I get my hands on a new RGB OLED Display I’ll update the project to use a limited palette of 16 colors like the old times.</p>
 
 <p>I didn’t develop the driver for my SSD1306 from scratch, instead I cloned this simple <a href="https://github.com/4ilo/ssd1306-stm32HAL">library</a> from Olivier Van den Eede which already uses STM32 HAL and contains pretty much all the abstraction I needed to build upon.</p>
 
@@ -116,7 +116,7 @@ Draw() is the function that paints all the stuff on the screen.</p>
 
 <p>Once I had the project ready I moved on to developing my three main functions. Init() was pretty straightforward, only needed to include initialization of variables, hardware, etc. While Draw() and Update() were independent tasks.</p>
 
-<p>The basic drawable game element is determined by the structure <em>BodyNode</em>. <em>BodyNode</em> contains pretty much all the necessary information to know where every object should be drawn, the details of the sprite it is using and a flag to know whether the program should hide the sprite or not.</p>
+<p>The basic drawable game element is defined by the structure <em>BodyNode</em>. <em>BodyNode</em> contains pretty much all the necessary information to know where every object should be drawn, the details of the sprite it is using and a flag to know whether the program should hide the sprite or not.</p>
 
 <p><img src="/assets/images/spriteHeart.png" alt="Heart sprite in bits" class="img-responsive" width="200px" />
 <img src="/assets/images/spriteHeartPico.png" alt="Heart sprite intended" class="img-responsive" width="175" /></p>
