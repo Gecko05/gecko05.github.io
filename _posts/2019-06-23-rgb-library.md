@@ -61,3 +61,4 @@ The character printing stuff is heavily based on Olivier van Ede's "ssd1306-stm3
 # Building upon
 
 The next step is going back to the Breakout-like game and develop a way to load sprites from a file system. Then maybe even extending to a graphics library to something more sophisticated as well as importing Lua scripts into a STM32 microcontroller to make simple games that use this library. You can find three demos listed in the main readme file of the repository. As always, if you're curious then feel free to fork and test this library into your own favorite micro-controller.
+[Repository here](https://github.com/Gecko05/SSD1351-Driver-Library)
