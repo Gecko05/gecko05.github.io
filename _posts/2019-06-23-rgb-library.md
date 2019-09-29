@@ -2,6 +2,7 @@
 layout: post
 title: "Using an RGB display with embedded C"
 author: Jaime Centeno
+youtubeId: eNKy-4qQbHk
 ---
 
 Two months ago I got a new 128x128 OLED Display to play with, this time it was the **SSD1351**. This OLED display, although limited, supports RGB colors which has been very exciting as it's my first time working with one of those. I got this display from [ebay](https://www.ebay.com/sch/i.html?_from=R40&_trksid=p2380057.m570.l1313.TR1.TRC0.A0.H0.Xssd1351.TRS0&_nkw=ssd1351&_sacat=0) for around $17, a relatively cheap price if we consider its potential.

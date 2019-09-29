@@ -4,4 +4,4 @@ title: About
 permalink: /about/
 ---
 
-This is a personal website for blog entries, tutorials, and descriptions mainly about embedded programming projects and oher topics.
+This is a personal website for blog entries, tutorials, and descriptions mainly about embedded programming projects and some other topics.
