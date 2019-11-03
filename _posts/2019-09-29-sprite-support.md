@@ -8,9 +8,9 @@ After finishing and adding support for my [OLED display library](https://github.
 
 ![Zero](/assets/gifs/zero.gif){:class="img-responsive" width="600px" caption="A megaman X animation"}
 
-## Not that kind of sprite
+## Using a sprite
 
-Before talking further about games, we need to talk about sprites. Well, I don't quite have the perfect answer for what a sprite is, but I would define a sprite as a static 2D image we use as a resource to draw all the animations and stuff we'll see on a screen. With sprites we can define the steps of an animation, our characters, environment, effects, etc. Basically everything that is visible in a 2D game. Sprites come quite handy to use when working with pixel games, it's easy to draw them, there are plenty of tools to use and they just look pretty.
+Well, I don't quite have the perfect answer for what a sprite is, but I would define a sprite as a 2D image we use as a resource to draw each key frame of every animation and visual effect we'll see on a screen. With sprites we create an animation, our characters, environment, effects, etc. Basically everything that is visible in a 2D game. Sprites come quite handy to use when working with pixel games, it's easy to draw them, there are plenty of tools to use and they just look pretty.
 
 ![Sprite sprite](/assets/images/spritePixel.jpg){:class="img-responsive" width="150px" caption="Sprite sprite"}
 
