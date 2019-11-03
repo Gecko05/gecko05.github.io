@@ -12,7 +12,7 @@ After finishing and adding support for my [OLED display library](https://github.
 
 Well, I don't quite have the perfect answer for what a sprite is, but I would define a sprite as a 2D image we use as a resource to draw each key frame of every animation and visual effect we'll see on a screen. With sprites we create an animation, our characters, environment, effects, etc. Basically everything that is visible in a 2D game. Sprites come quite handy to use when working with pixel games, it's easy to draw them, there are plenty of tools to use and they just look pretty.
 
-![Sprite sprite](/assets/images/spritePixel.jpg){:class="img-responsive" width="150px" caption="Sprite sprite"}
+![Sprite sprite](/assets/images/spritePixel.jpg)
 
 After reading a bit about image formats I've decided to use the [.bmp format](https://en.wikipedia.org/wiki/BMP_file_format) to handle sprites, it's not an optimized format, but it makes image handling way more easy than if we used a compressed format like .png or .jpg.
 
