@@ -16,8 +16,8 @@
 title: The Blue Wire
 email: jaime.centeno505@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
-  Here you will find blog entries, tutorials and descriptions of projects about embedded
-  systems programming.
+  Here you will find blog entries about personal projects ranging from low level
+  programming to simple games.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: Jacacent
