@@ -7,7 +7,7 @@ author: Jaime Centeno
 <p>
 The things I felt when I made my first international trip was excitement, loneliness and cold.
 </p><p>
-Last December I made my first trip ever to a new country: Poland. This was also my first time taking a flight and my first time taking vacations after I started working for the industry. You might thinkg it wasn't the best idea to go on winter vacations alone to such a cold place, let alone if you come from a warm place like Mexico (Although winter can be pretty cold here as well). And it might be true, from a "fun" perspective, it would have been a better idea to go to a sunny place like the beach, or maybe a more touristic location. Instead I decided to go alone to the city of Poznan, capital of the Greater Poland.</p></div>
+Last December I made my first trip ever to a new country: Poland. This was also my first time taking a flight and my first time taking vacations after I started working for the industry. You might thinkg it wasn't the best idea to go on winter vacations alone to such a cold place, let alone if you come from a warm place like Mexico (Although winter can be pretty cold here as well). And it might be true, from a "comfortable" perspective, it would have been a better idea to go to a sunny place like the beach, or maybe a more touristic location. Instead I decided to go alone to the city of Poznan, capital of the Greater Poland.</p></div>
 
 ![SSD1351](/assets/images/ratusz.jpeg){:class="img-responsive" width="400px"}
 
@@ -25,22 +25,22 @@ As a nerd, my first interest in Poland sparked since I started playing The Witch
 ![SSD1351](/assets/images/witcher.jpeg){:class="img-responsive" width="400px"}
 <div style="text-align: justify"> 
 
-<p>If I were to repeat this trip with my current level of Polish language, I would feel more afraid than I felt before. In my imagination I overestimated my Polish profeciency, thinking that I would be able to understand every single word that came from native speakers or people on the streets, boy was I wrong.</p>
+<p>If I were to repeat this trip with my current level of Polish language, I would feel more afraid than I felt before. In my imagination I overestimated my Polish proficiency, thinking that I would be able to understand every single word that came out from native speakers or people on the streets.</p>
 </div>
 
 ## Getting to know the winter
 <div style="text-align: justify"> 
 
-<p>On my hometown, we have a joke that says "In this town we only have two stations: summer, and the bus station". As someone from a tropical birthplace, I had never really been on a typical winter season. The ones where the trees die, the clouds are always covering the sun, and the cold can kill you if you don't wear the appropiate clothes.</p>
+<p>As someone from a tropical birthplace, I had never really experienced a typical movie-like winter season, the ones where the trees die, the clouds are always covering the sun, and the cold can kill you if you don't wear the appropiate clothes.</p>
 
-<p>So, after almost 20 hours of traveling, I finally arrived to Poland. The first time I heard Polish I felt happy, as if I was at home. I had been hearing people talking in German for about 18 hours, and I don't know German at all. However, as I started hearing this first Polish conversation, some kind of fear also started growing on me since I only understood around 20% of what people were saying. I instantly knew I could have some trouble using a service, asking for food, or just trying to talk with Poles. </p>
+<p>So, after almost 20 hours of traveling, I finally arrived to Poland. The first time I heard polish I felt happy, as if I was at home. I had been hearing people talking in german for about 18 hours, and I don't know german at all. However, as I started hearing this first polish conversation, some kind of fear also started growing on me since I only understood around 20% of what people were saying. I instantly knew I could have some trouble using a service, asking for food, or just trying to chat with Poles. </p>
 </div>
 ![SSD1351](/assets/images/walk.jpeg){:class="img-responsive" width="400px"}
 
 <div style="text-align: justify"> 
 <p>When I arrived to Poznan airport, I saw this grey cold winter weather I've never seen before. It was something exciting, yet also daunting. Everything was new to me, and I felt like I was a child who got lost. Also, the airport was lonely, and a bit dark since not all the lights were turned on. No familiar faces, no native languages, everyone was tall and white. So then a concerning thought crossed my mind: "Where the heck did I come to?".</p>
 
-<p>I could have been more comfortable going to almost anywhere in Mexico, and even more comfortable if I just stayed at home playing games from my bed. But then I remembered that I didn't go on this trip to feel comfortable. As I said, I had never been to an airport, I had never taken a flight, and I've not done too much traveling by myself. I knew I wasn't going to feel comfortable, but I wasn't sure what to expect either.</p>
+<p>I could have been more comfortable going to almost anywhere in Mexico, and even more comfortable if I just stayed at home playing games from my bed all day long. I knew I wasn't going to feel comfortable, but I wasn't sure what to expect either.</p>
 
 <p>So then I went and stayed at a hostel, expecting to make new friends who would share with me a lot of interesting stories about how they travel around the world and what they like about Poland. Yeah, I was wrong. For the most part I stayed alone in a bedroom for six people. The first night was so cold, and I had no idea how warmers worked so I didn't bother to turn them on (Yeah, I can be that stupid). That first night I met an Ukrainian guy, and we talked for a while. He was on his way to Ukraine to visit his family for New Year's Eve.</p></div>
 
@@ -58,7 +58,7 @@ As a nerd, my first interest in Poland sparked since I started playing The Witch
 ## I was carrying the sunny weather with me all the time
 
 <div style="text-align: justify"> 
-<p>At the hotel I got used to the schedule change and things started to look brighter for me. This time the breakfast was nice, I felt more privacy, practiced talking Polish with people, and I got to know the city better. I also met a guy from Mexico who was also on vacations, he was visiting his sister who already lived in Poland. This helped me a lot since we went out to eat some delicious pierogi, meet a Polish friend of his, and I got to talk plenty of Spanish. Also, in the next days I would meet for the first time with my best Polish friend with whom I had been talking for almost a year now. This is the time when my anxiety started to drop like never before and something clicked on my head; I'm just the same old me, and maybe even a more interesting and well-rested version of me in Poland. Wherever I get to go, I don't depend on my surroundings to define who I am.</p>
+<p>At the hotel I got used to the schedule change and things started to look brighter for me. This time the breakfast was nice, I felt more privacy, practiced talking Polish with people, and I got to know the city better. I also met a guy from Mexico who was also on vacations, he was visiting his sister who already lived in Poland. This helped me a lot since we went out to eat some delicious pierogi, meet a Polish friend of his, and I got to talk plenty of Spanish. Also, in the next days I would meet for the first time with my best Polish friend with whom I had been talking for almost a year now. This is the time when my anxiety levels started to drop and something clicked on my head; I'm just the same old me, and maybe even a more interesting and well-rested version of me in Poland. Wherever I get to go, I don't depend on my surroundings to define who I am.</p>
 </div>
 
 ![SSD1351](/assets/images/churchWow.jpeg){:class="img-responsive" width="400px"}
