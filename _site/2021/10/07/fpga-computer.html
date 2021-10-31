@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Developing a computer inside an FPGA | Gecko05 Blog</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Developing a computer inside an FPGA" />
+<meta name="author" content="Jaime Centeno" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Almost a year ago I started working on a new project to improve my understanding of computer architecture and VHDL programming. I’ve not always been interested in using FPGAs, unfortunately, at university I didn’t even understand what the difference between a processor and an FPGA was." />
+<meta property="og:description" content="Almost a year ago I started working on a new project to improve my understanding of computer architecture and VHDL programming. I’ve not always been interested in using FPGAs, unfortunately, at university I didn’t even understand what the difference between a processor and an FPGA was." />
+<link rel="canonical" href="http://localhost:4000/2021/10/07/fpga-computer.html" />
+<meta property="og:url" content="http://localhost:4000/2021/10/07/fpga-computer.html" />
+<meta property="og:site_name" content="Gecko05 Blog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-10-07T00:00:00-05:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Developing a computer inside an FPGA" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","url":"http://localhost:4000/2021/10/07/fpga-computer.html","headline":"Developing a computer inside an FPGA","dateModified":"2021-10-07T00:00:00-05:00","datePublished":"2021-10-07T00:00:00-05:00","author":{"@type":"Person","name":"Jaime Centeno"},"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2021/10/07/fpga-computer.html"},"description":"Almost a year ago I started working on a new project to improve my understanding of computer architecture and VHDL programming. I’ve not always been interested in using FPGAs, unfortunately, at university I didn’t even understand what the difference between a processor and an FPGA was.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Gecko05 Blog" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Gecko05 Blog</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Developing a computer inside an FPGA</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2021-10-07T00:00:00-05:00" itemprop="datePublished">Oct 7, 2021
+      </time>• <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">Jaime Centeno</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>Almost a year ago I started working on a new project to improve my understanding of computer architecture and VHDL programming. I’ve not always been interested in using FPGAs, unfortunately, at university I didn’t even understand what the difference between a processor and an FPGA was.</p>
+
+<p>As I started learning more about low level programming and videogames, I came up with this idea of developing an emulator for the NES inside an FPGA to play on the “original” hardware withouth having to find and maintain one. However, my computer architecture and VHDL skills at the time were almost non-existent, so I decided to start with a simpler project.</p>
+
+<p>After searching for projects, I came across <a href="https://hackaday.com/2016/03/16/crawl-walk-run-planning-your-first-cpu-design/">this article</a> from Al Williams on <a href="https://hackaday.com/">Hackaday</a>. Al suggested starting with a basic computer (Blue), one that Caxton C.Foster specified in his really old book “Computer Architecture”. I was unable to find this book physically at an affordable price, but eventually I found it on archive.org, what a great site!</p>
+
+<p>So I started programming, I created <a href="https://github.com/Gecko05/BlueFPGA">this repository</a> and starting translater the simplest parts of the logic gates diagrams to VHDL programs. Sites like nandland.com and vhdlwhiz.com have been especially helpful in teaching me the basics of VHDL development and get me ready to write this project.</p>
+
+<h2 id="the-simple-stuff">The simple stuff</h2>
+
+<p>The first thing I did was read through the specification and writing down notes on how the computer really works. There are a lot of nice diagramas and tables which I copied into the repositories REAME file to keep the important stuff handy and organized.</p>
+
+<p>Some relevant information about Blue:
+    - 4096 words of addressed core storage of 16 bits per word
+    - Words in data storage as treated as 15-bit integers plus sign
+    - Instructions are 4 bit OP code with 12 bit address (4096).
+    - 16-bit Acc
+    - 16-bit instruction register
+    - 12-bit program counter
+    - 12-bit Memory Address Register, 16-bit Memory Buffer Register and a 16-bit Z register that are not accessible to the programmer.
+    - 16 different instructions for the 4-bit OPCode.
+    - If the highest bit is 1, the number is negative.</p>
+
+<p>As you can see Blue is a really simple computer, perfect for beginners in computer architecture. To be honest, I wasn’t expecting things inside a comptuer to be as simple as they are, with a bunch of logic diagrams, Caxton C.Foster is able to describe the basic components of a complex machine.</p>
+
+<p>At this point, my motivation peaked and I started to get a lot of “aha” moments, I thought everything was sorted out for me inside these logic diagrams and I was ready to jump into the code and start programming.</p>
+
+<h2 id="the-pain-of-initialization">The pain of initialization</h2>
+
+<p>Setting up the tools and stuff you need to actually do the coding can be really tedious. For this project I ordered an FPGA from numato, specifically, the MimasV2. It’s comes with a nice board full of io components to test your designs and has worked really well so far.</p>
+
+  </div><a class="u-url" href="/2021/10/07/fpga-computer.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Gecko05 Blog</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Gecko05 Blog</li><li><a class="u-email" href="mailto:jaime.centeno505@gmail.com">jaime.centeno505@gmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/Gecko05"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">Gecko05</span></a></li><li><a href="https://www.twitter.com/Jacacent"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">Jacacent</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Here you will find blog entries about personal projects ranging from low level programming to simple games.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

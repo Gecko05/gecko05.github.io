@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Developing the Blue computer in an FPGA"
+title: "Developing a computer inside an FPGA"
 author: Jaime Centeno
 ---
 
@@ -31,6 +31,6 @@ As you can see Blue is a really simple computer, perfect for beginners in comput
 
 At this point, my motivation peaked and I started to get a lot of "aha" moments, I thought everything was sorted out for me inside these logic diagrams and I was ready to jump into the code and start programming.
 
-## The pain of initializing
+## The pain of initialization
 
 Setting up the tools and stuff you need to actually do the coding can be really tedious. For this project I ordered an FPGA from numato, specifically, the MimasV2. It's comes with a nice board full of io components to test your designs and has worked really well so far.
