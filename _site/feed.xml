@@ -1,7 +1,37 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2021-10-31T13:59:37-06:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Gecko05 Blog</title><subtitle>Here you will find blog entries about personal projects ranging from low level programming to simple games.</subtitle><entry><title type="html">Gauss Synth - Puzzle game in Pico8</title><link href="http://localhost:4000/2020/03/31/gauss-synth.html" rel="alternate" type="text/html" title="Gauss Synth - Puzzle game in Pico8" /><published>2020-03-31T00:00:00-06:00</published><updated>2020-03-31T00:00:00-06:00</updated><id>http://localhost:4000/2020/03/31/gauss-synth</id><content type="html" xml:base="http://localhost:4000/2020/03/31/gauss-synth.html">&lt;iframe src=&quot;https://www.lexaloffle.com/bbs/widget.php?pid=gaussynth&quot; allowfullscreen=&quot;&quot; width=&quot;621&quot; height=&quot;513&quot; style=&quot;border:none; overflow:hidden&quot;&gt;&lt;/iframe&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2021-10-31T14:42:23-06:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Gecko05 Blog</title><subtitle>Here you will find blog entries about personal projects ranging from low level programming to simple games.</subtitle><entry><title type="html">Developing a computer inside an FPGA</title><link href="http://localhost:4000/2021/10/07/fpga-computer.html" rel="alternate" type="text/html" title="Developing a computer inside an FPGA" /><published>2021-10-07T00:00:00-05:00</published><updated>2021-10-07T00:00:00-05:00</updated><id>http://localhost:4000/2021/10/07/fpga-computer</id><content type="html" xml:base="http://localhost:4000/2021/10/07/fpga-computer.html">&lt;p&gt;Almost a year ago I started working on a new project to improve my understanding of computer architecture and VHDL programming. I’ve not always been interested in using FPGAs, unfortunately, at university I didn’t even understand what the difference between a processor and an FPGA was.&lt;/p&gt;
 
-&lt;p&gt;This is a simple puzzle game made in Pico8. Inspired by Gauss Jordan elimination. 
-My objective was to reflect the “intuitive” feeling of solving systems of equations using the GJ elimination method in a simpler and more fun way. I’m not sure how fun it is though, to be honest I don’t feel the desire to play it much.&lt;/p&gt;
+&lt;p&gt;As I started learning more about low level programming and videogames, I came up with this idea of developing an emulator for the NES inside an FPGA to play on the “original” hardware withouth having to find and maintain one. However, my computer architecture and VHDL skills at the time were almost non-existent, so I decided to start with a simpler project.&lt;/p&gt;
+
+&lt;p&gt;After searching for projects, I came across &lt;a href=&quot;https://hackaday.com/2016/03/16/crawl-walk-run-planning-your-first-cpu-design/&quot;&gt;this article&lt;/a&gt; from Al Williams on &lt;a href=&quot;https://hackaday.com/&quot;&gt;Hackaday&lt;/a&gt;. Al suggested starting with a basic computer (Blue), one that Caxton C.Foster specified in his really old book “Computer Architecture”. I was unable to find this book physically at an affordable price, but eventually I found it on archive.org, what a great site!&lt;/p&gt;
+
+&lt;p&gt;So I started programming, I created &lt;a href=&quot;https://github.com/Gecko05/BlueFPGA&quot;&gt;this repository&lt;/a&gt; and starting translater the simplest parts of the logic gates diagrams to VHDL programs. Sites like nandland.com and vhdlwhiz.com have been especially helpful in teaching me the basics of VHDL development and get me ready to write this project.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-simple-stuff&quot;&gt;The simple stuff&lt;/h2&gt;
+
+&lt;p&gt;The first thing I did was read through the specification and writing down notes on how the computer really works. There are a lot of nice diagramas and tables which I copied into the repositories REAME file to keep the important stuff handy and organized.&lt;/p&gt;
+
+&lt;p&gt;Some relevant information about Blue:
+    - 4096 words of addressed core storage of 16 bits per word
+    - Words in data storage as treated as 15-bit integers plus sign
+    - Instructions are 4 bit OP code with 12 bit address (4096).
+    - 16-bit Acc
+    - 16-bit instruction register
+    - 12-bit program counter
+    - 12-bit Memory Address Register, 16-bit Memory Buffer Register and a 16-bit Z register that are not accessible to the programmer.
+    - 16 different instructions for the 4-bit OPCode.
+    - If the highest bit is 1, the number is negative.&lt;/p&gt;
+
+&lt;p&gt;As you can see Blue is a really simple computer, perfect for beginners in computer architecture. To be honest, I wasn’t expecting things inside a comptuer to be as simple as they are, with a bunch of logic diagrams, Caxton C.Foster is able to describe the basic components of a complex machine.&lt;/p&gt;
+
+&lt;p&gt;At this point, my motivation peaked and I started to get a lot of “aha” moments, I thought everything was sorted out for me inside these logic diagrams and I was ready to jump into the code and start programming.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-pain-of-initialization&quot;&gt;The pain of initialization&lt;/h2&gt;
+
+&lt;p&gt;Setting up the tools and stuff you need to actually do the coding can be really tedious. For this project I ordered an FPGA from numato, specifically, the MimasV2. It’s comes with a nice board full of io components to test your designs and has worked really well so far.&lt;/p&gt;</content><author><name>Jaime Centeno</name></author><summary type="html">Almost a year ago I started working on a new project to improve my understanding of computer architecture and VHDL programming. I’ve not always been interested in using FPGAs, unfortunately, at university I didn’t even understand what the difference between a processor and an FPGA was.</summary></entry><entry><title type="html">Gauss Synth - Puzzle game in Pico8</title><link href="http://localhost:4000/2020/03/31/gauss-synth.html" rel="alternate" type="text/html" title="Gauss Synth - Puzzle game in Pico8" /><published>2020-03-31T00:00:00-06:00</published><updated>2020-03-31T00:00:00-06:00</updated><id>http://localhost:4000/2020/03/31/gauss-synth</id><content type="html" xml:base="http://localhost:4000/2020/03/31/gauss-synth.html">&lt;iframe src=&quot;https://www.lexaloffle.com/bbs/widget.php?pid=gaussynth&quot; allowfullscreen=&quot;&quot; width=&quot;621&quot; height=&quot;513&quot; style=&quot;border:none; overflow:hidden&quot;&gt;&lt;/iframe&gt;
+
+&lt;p&gt;This is a simple puzzle game made in Pico8. Inspired by Gauss Jordan elimination.&lt;/p&gt;
+
+&lt;p&gt;My objective was to reflect the “intuitive” feeling of solving systems of equations using the GJ elimination method in a simpler and more fun way. I’m not sure how fun it is though, to be honest I don’t feel the desire to play it much.&lt;/p&gt;
 
 &lt;p&gt;Controls:&lt;/p&gt;
 &lt;ul&gt;
