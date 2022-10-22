@@ -45,6 +45,7 @@ And here's the instruction set:
 - 17-NOP XXXX: Does nothing.
 
 Now, the real implementation innards are kinda complicated, we have tons of logic gates and buses inside Blue,  you can check [this repo](https://github.com/Gecko05/BlueFPGA) for more details. This makes the task of writing a hardware emulator much more complicated than writing a software emulator, at least a software emulator that only cares about interpreting programs and outputs.
+
 For this exercise, we don't really care about implementing all the buses and gate logic, we're only worried about handling the registers properly
 and following what the specification tells us about how each instruction is interpreted.
 
