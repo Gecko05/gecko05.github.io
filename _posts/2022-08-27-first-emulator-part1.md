@@ -43,6 +43,8 @@ Now, the architecture innards are kinda complicated, we have tons of logic gates
 For this exercise, we don't really care about implementing all the buses and gate logic, we're only worried about handling the registers properly
 and following what the specification tells us about how each instruction is interpreted.
 
+## Emulating our first cycle
+
 Let's start with the simple stuff. We'll forget about any input/output handling and start by coding the core of our emulator, the function
 that will emulate the instruction cycle. That is, covering the steps that will be needed to process a whole instruction. We'll begin by emulating the FETCH cycle.
 
@@ -97,7 +99,7 @@ typedef enum {
 } State;
 
 State STATE = FETCH;
-``
+```
 
 Now let's code the common steps.
 ```
@@ -136,6 +138,8 @@ void process_tick(uint8_t tick)
 }
 ```
 You'll notice that we're missing the part where the Memory Address Register is updated based on the Program Counter, without this, we're stuck executing the same instruction again and again. However, this is a instruction-specific operation, so we need to start implementing the actual instructions if we want to advance through our program.
+
+## Emulating the NOP instruction
 
 Let's implement the easiest instruction first, the NOP instruction.
 
@@ -222,7 +226,11 @@ Time to see our emulator in action. Compile it with g++ or any C++ compiler you 
     <figcaption>Humble beginnings</figcaption>
 </figure>
 
-Even though this doesn't look too impressive, I hope it's exciting enough! From the output you can see how the contents of the Memory Buffer Register, Instruction Register, Memory Address Register and Program Counter change with each cycle. Although the NOP instruction does nothing, we can be sure that the instructions are being read from the RAM and the PC has an effect on the MAR. To spice things up let's implement the JMP instruction.
+Even though this doesn't look too impressive, I hope it's exciting enough! From the output you can see how the contents of the Memory Buffer Register, Instruction Register, Memory Address Register and Program Counter change with each cycle. Although the NOP instruction does nothing, we can be sure that the instructions are being read from the RAM and the PC has an effect on the MAR. 
+
+## Emulating the JMP instruction
+
+To spice things up let's implement the JMP instruction.
 
 <figure>
     <img src="/assets/images/jumpIns.png" alt="Jump Instruction" width="500px">
@@ -277,6 +285,8 @@ This program should skip 0xF005 and jump into 0xF010, then jump back to the begi
 </figure>
 
 Finally some tasty instructions! As you can see, we're jumping twice, the first jump will skip instruction 0xF005, then the second jump loops us back to the first instruction 0xF000.
+
+## To be continued...
 
 Extending the emulator and adding more instructions will start making our program harder to debug and modify. In the next part of this tutorial we'll go through the process of adding more instructions to our emulator and making things a little bit more maintainable. We'll also eventually reach the part where we need to handle IO data, and there are a ton of ways to tackle this topic.
 
