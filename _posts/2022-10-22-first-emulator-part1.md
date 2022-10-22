@@ -301,10 +301,10 @@ This program should skip 0xF005 and jump into 0xF010, then jump back to the begi
 
 Finally some tasty instructions! As you can see, we're jumping twice, the first jump will skip instruction 0xF005, then the second jump loops us back to the first instruction 0xF000.
 
+The end result for this part should look something like [this](https://github.com/Gecko05/gecko05.github.io/tree/master/assets/blueEmulator.cpp)
+
 ## To be continued...
 
 Extending the emulator and adding more instructions will start making our program harder to debug and modify. In the next part of this tutorial we'll go through the process of adding more instructions to our emulator and making things a little bit more maintainable. We'll also eventually reach the part where we need to handle IO data, and there are a ton of ways to tackle this topic.
-
-The end result for this part should look something like [this](https://github.com/Gecko05/gecko05.github.io/tree/master/assets/blueEmulator.cpp)
 
 Take a look at the [finished emulator](https://github.com/Gecko05/BlueFPGA) or continue fleshing out your emulator in any way you want. You could even define new instruction sets, create a pipeline, change the RAM size, etc. Sky is the limit!
