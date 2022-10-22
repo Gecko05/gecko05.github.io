@@ -283,12 +283,12 @@ And finally, we change our program to include some jump instructions, compile an
 ```
 // Sample program
 uint16_t program0[6] = {
-	0xF000,
+	0xF000, // Instruction #0
 	0xF003,
-	0xA004,
-	0xF005,
+	0xA004, // Jump to instruction #4 (fifth one)
+	0xF005, // This shouldn't be executed
 	0xF010,
-	0xA000
+	0xA000 // Jump back to instruction #0
 };
 ```
 This program should skip 0xF005 and jump into 0xF010, then jump back to the beginning looping infinitely. Let's verify it works with our debug information.
