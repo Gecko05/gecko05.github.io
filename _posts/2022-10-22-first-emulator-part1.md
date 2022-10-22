@@ -4,7 +4,7 @@ title: "Making your first emulator Part I"
 author: Jaime Centeno
 ---
 
-I decided to make these posts to walk you through the process of creating a simple emulator for a simple processor: Blue.
+I decided to make these posts to walk you through the process of creating a simple emulator for a simple processor: [Caxton Foster's Blue](https://www.amazon.com/Computer-architecture-science-Caxton-Foster/dp/B0006C2T2O).
 Think of this "tutorial" as a way to give you ideas on how to write an emulator, when I started writing this I knew emulators existed and I was familiar with programming, but I just didn't know where to begin. So if you feel like how I felt, I hope this post can help you and make things more clear.
 
 We're going to code an emulator in C++, but the approach used here can be applied to any language, some familiarity with computer architecture concepts and of course programming may be needed to follow this post.
