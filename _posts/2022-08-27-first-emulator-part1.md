@@ -1,6 +1,6 @@
 # Making your first emulator Part I
 
-I'm making this series of posts to walk you through the process of creating a simple emulator for a simple processor; Blue.
+I decided to make these posts to walk you through the process of creating a simple emulator for a simple processor: Blue.
 Think of this "tutorial" as a way to give you ideas on how to write an emulator, when I started writing this I knew emulators existed and I was familiar with programming, but I just didn't know where to begin, how to design the whole thing. So if you feel like how I felt, I hope this post can help you and make things clearer. 
 The emulator I'm going to show you was written in C++, but the approach used here can be applied to any language, some familiarity with computer architecture concepts and of course programming may be needed to follow this post.
 
