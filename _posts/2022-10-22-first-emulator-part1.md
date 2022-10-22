@@ -271,8 +271,8 @@ void process_tick(uint8_t tick)
     ...
     uint8_t INS = get_instruction();
 	if (INS == 15) {
-        do_NOP(tick);
-    }
+		do_NOP(tick);
+	}
 	else if (INS == 10) {
 		do_JMP(tick);
 	}
