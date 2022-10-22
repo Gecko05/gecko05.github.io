@@ -66,7 +66,7 @@ void emulateCycle()
 ```
 As you can see a major cycle will consist of a loop of 8 smaller steps, each iteration we'll call *process_tick* to execute any step defined by our instruction. Each instruction does different things at each step of the cycle and both cycles are made of 8 steps, so we can leave all the implementation details of FETCH/EXECUTE to this *process_tick* function.
 
-![Fetch](https://github.com/Gecko05/BlueFPGA/raw/master/resources/028bd53753d54035b12f278d878513ba.png){:class="img-responsive" width="400px"}
+![Fetch](https://github.com/Gecko05/BlueFPGA/raw/master/resources/028bd53753d54035b12f278d878513ba.png)
 
 Now, let's start fleshing out some of the instructions. These are the common steps that we need to emulate for any instruction as long as the fetch cycle is active. Some instructions only need this cycle, while others need more steps and thus require an additional EXECUTE cycle.
 To achieve this, first we have to define some registers. All the registers are 16-bit wide, so uint16_t can be used as the type.
@@ -143,7 +143,7 @@ You'll notice that we're missing the part where the Memory Address Register is u
 
 Let's implement the easiest instruction first, the NOP instruction.
 
-![NOP](https://github.com/Gecko05/BlueFPGA/raw/master/resources/9887f70e74ef4431b4aebd180116f503.png){:class="img-responsive" width="400px"}
+![NOP](https://github.com/Gecko05/BlueFPGA/raw/master/resources/9887f70e74ef4431b4aebd180116f503.png)
 
 According to the spec, the NOP instruction does nothing when executed, so we only need to care about updating the MAR with the contents of the Program Counter so that the next instruction is executed after we're done with NOP. This is the code we'll need:
 ```
@@ -233,7 +233,7 @@ Even though this doesn't look too impressive, I hope it's exciting enough! From 
 To spice things up let's implement the JMP instruction.
 
 <figure>
-    <img src="/assets/images/jumpIns.png" alt="Jump Instruction" width="500px">
+    <img src="/assets/images/jumpIns.png" alt="Jump Instruction" width="250px">
     <figcaption>Look ma, jump is so simple!</figcaption>
 </figure>
 
