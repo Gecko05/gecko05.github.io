@@ -193,6 +193,7 @@ Time to see the matrix! Our test program will be just a bunch of NOP instruction
     <figcaption>Ah yes, that's a woman in a red dress</figcaption>
 </figure>
 
+NOP takes no operands so their presence shouldn't really affect the instruction, they'll simply be ignored.
 The test program:
 ```
 // The first nibble of the most significant byte holds the
@@ -202,10 +203,10 @@ The test program:
 
 // Sample program
 uint16_t program0[4] = {
-	0xF000,
-	0xF003,
-	0xF000,
-	0xF005
+	0xF000, // NOP 000
+	0xF003, // NOP 003
+	0xF000, // NOP 000
+	0xF005  // NOP 005
 };
 ```
 We now need a way to load the program into the RAM and actually execute it.
