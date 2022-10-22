@@ -94,7 +94,7 @@ blue_register PC = 0x00; // Program Counter - To perform jumps and handle instru
 blue_register SR;        // Console Switch Register - To input data manually
 blue_register Z;         // Z register - Auxiliary register for calculations
 ```
-I went a bit too fancy with the typedef instead of using plain uint16_t, but that's totally. I just thought it would be more readable that way.
+I went a bit too fancy with the typedef instead of using plain uint16_t, but that's totally optional. I just thought it would be more readable that way.
 
 Inside *process_tick* we'll code the logic for executing the common steps for FETCH cycles. So we also need to define the states and a variable to hold the current state.
 
@@ -185,7 +185,14 @@ void process_tick(uint8_t tick)
 There are better, more maintainable ways of doing this other than a bunch of if/else statements for every instruction. We'll see that in the next post once we start introducing more instructions, or you can just take a peek at the emulator's repo ;).
 
 Now, let's code the "infrastructure" we need to load a program and run it inside our emulator!
-Time to see the matrix, this will be our sample program, just a bunch of NOP instructions with random operands as you can "clearly" see.
+Time to see the matrix! Our test program will be just a bunch of NOP instructions with random operands as you can *clearly* see.
+
+<figure>
+    <img src="/assets/images/matrix.png" alt="See the matrix" width="400px">
+    <figcaption>Ah yes, that's a woman with a red dress</figcaption>
+</figure>
+
+The test program:
 ```
 // The first nibble of the most significant byte holds the
 // instruction. The rest is just operands.
@@ -232,7 +239,7 @@ Time to see our emulator in action. Compile it with g++ or any C++ compiler you 
     <figcaption>Humble beginnings</figcaption>
 </figure>
 
-Even though this doesn't look too impressive, I hope it's exciting enough! From the output you can see how the contents of the Memory Buffer Register, Instruction Register, Memory Address Register and Program Counter change with each cycle. Although the NOP instruction does nothing, we can be sure that the instructions are being read from the RAM and the PC has an effect on the MAR. 
+Even though this doesn't look too impressive, it's exciting enough! From the output you can see how the contents of the Memory Buffer Register, Instruction Register, Memory Address Register and Program Counter change with each cycle. Although the NOP instruction does nothing, we can be sure that the instructions are being read from the RAM and the PC has an effect on the MAR. 
 
 ## Emulating the JMP instruction
 
@@ -240,7 +247,7 @@ To spice things up let's implement the JMP instruction.
 
 <figure>
     <img src="/assets/images/jumpIns.png" alt="Jump Instruction" width="250px">
-    <figcaption>Look ma, jump is so simple!</figcaption>
+    <figcaption>Look ma, jumping is so simple!</figcaption>
 </figure>
 
 
