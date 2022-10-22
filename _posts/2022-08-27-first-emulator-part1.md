@@ -237,6 +237,7 @@ To spice things up let's implement the JMP instruction.
     <figcaption>Look ma, jump is so simple!</figcaption>
 </figure>
 
+
 ```
 void do_JMP(uint8_t tick)
 {
@@ -283,6 +284,7 @@ This program should skip 0xF005 and jump into 0xF010, then jump back to the begi
     <img src="/assets/images/blueLoop.png" alt="Blue loop" width="500px">
     <figcaption>It just works</figcaption>
 </figure>
+
 
 Finally some tasty instructions! As you can see, we're jumping twice, the first jump will skip instruction 0xF005, then the second jump loops us back to the first instruction 0xF000.
 
