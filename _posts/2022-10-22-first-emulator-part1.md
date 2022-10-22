@@ -1,9 +1,8 @@
 ---
 layout: post
-title: "Developing a computer inside an FPGA"
+title: "Making your first emulator Part I"
 author: Jaime Centeno
 ---
-# Making your first emulator Part I
 
 I decided to make these posts to walk you through the process of creating a simple emulator for a simple processor: Blue.
 Think of this "tutorial" as a way to give you ideas on how to write an emulator, when I started writing this I knew emulators existed and I was familiar with programming, but I just didn't know where to begin. So if you feel like how I felt, I hope this post can help you and make things more clear. 
