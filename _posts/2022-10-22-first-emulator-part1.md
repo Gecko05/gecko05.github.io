@@ -273,7 +273,7 @@ This is a fun instruction that will let us jump around the code, allowing us to 
 void process_tick(uint8_t tick)
 {
     ...
-    uint8_t INS = get_instruction();
+	uint8_t INS = get_instruction();
 	if (INS == 15) {
 		do_NOP(tick);
 	}
