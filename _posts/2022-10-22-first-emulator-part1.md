@@ -186,7 +186,7 @@ void process_tick(uint8_t tick)
 There are better, more maintainable ways of doing this other than a bunch of if/else statements for every instruction. We'll see that in the next post once we start introducing more instructions, or you can just take a peek at the emulator's repo ;).
 
 Now, let's code the "infrastructure" we need to load a program and run it inside our emulator!
-Time to see the matrix! Our test program will be just a bunch of NOP instructions with random operands as you can *clearly* see.
+Time to see the matrix! Our test program will be just a bunch of NOP instructions with random operands as you can *clearly* see. What we'll use a test program is basically just machine code, we're writing the instructions by hand using hexadecimal numbers. There's an opportunity to create an assembler program that lets us write in "assembly" instead of plain numbers, but we'll cover that later.
 
 <figure>
     <img src="/assets/images/matrix.png" alt="See the matrix" width="400px">
