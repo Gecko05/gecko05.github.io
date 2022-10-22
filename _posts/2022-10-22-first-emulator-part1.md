@@ -1,13 +1,14 @@
 # Making your first emulator Part I
 
 I decided to make these posts to walk you through the process of creating a simple emulator for a simple processor: Blue.
-Think of this "tutorial" as a way to give you ideas on how to write an emulator, when I started writing this I knew emulators existed and I was familiar with programming, but I just didn't know where to begin, how to design the whole thing. So if you feel like how I felt, I hope this post can help you and make things clearer. 
-The emulator I'm going to show you was written in C++, but the approach used here can be applied to any language, some familiarity with computer architecture concepts and of course programming may be needed to follow this post.
+Think of this "tutorial" as a way to give you ideas on how to write an emulator, when I started writing this I knew emulators existed and I was familiar with programming, but I just didn't know where to begin. So if you feel like how I felt, I hope this post can help you and make things more clear. 
+We're going to code an emulator in C++, but the approach used here can be applied to any language, some familiarity with computer architecture concepts and of course programming may be needed to follow this post.
 
 ## Blue's architecture
 
-Blue is a simple and underpowered machine, but still reflects the core concept of how computers work. In order to 
+Blue is a simple and underpowered machine, but it still reflects the core concept of how computers work. In order to 
 write something that will ressemble the original hardware, we first need to know how the innards of the design.
+
 These are the specs:
     * 4096 words of addressed core storage of 16 bits per word.
     * Words in data storage as treated as 15-bit integers plus sign.
@@ -20,7 +21,6 @@ These are the specs:
     * Two's complement interpretation.
 
 And here's the instruction set: 
-
     Octal representation for Op code
         00-HLT XXXX: The computer will halt. The START button on the console will cause the computer to start going again, beginning with the instruction following the HLT.
         01-ADD XXXX: The contents of XXXX are added tot the contents of the accumulator and the sum is put into the accumulator. If the result is greater than 2^15-1 or less than -2^15 the machine stops.
@@ -39,7 +39,7 @@ And here's the instruction set:
         16-CSA XXXX: The number set into the console switch register replaces the contents of the accumulator.
         17-NOP XXXX: Does nothing.
 
-Now, the architecture innards are kinda complicated, we have tons of logic gates and buses inside Blue,  you can check [this repo](https://github.com/Gecko05/BlueFPGA) for more details. This makes the task of writing a hardware emulator much more complicated than writing a software emulator, at least a software emulator that only cares about interpreting programs and output results.
+Now, the real implementation innards are kinda complicated, we have tons of logic gates and buses inside Blue,  you can check [this repo](https://github.com/Gecko05/BlueFPGA) for more details. This makes the task of writing a hardware emulator much more complicated than writing a software emulator, at least a software emulator that only cares about interpreting programs and outputs.
 For this exercise, we don't really care about implementing all the buses and gate logic, we're only worried about handling the registers properly
 and following what the specification tells us about how each instruction is interpreted.
 
