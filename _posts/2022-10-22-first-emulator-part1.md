@@ -189,7 +189,7 @@ Time to see the matrix! Our test program will be just a bunch of NOP instruction
 
 <figure>
     <img src="/assets/images/matrix.png" alt="See the matrix" width="400px">
-    <figcaption>Ah yes, that's a woman with a red dress</figcaption>
+    <figcaption>Ah yes, that's a woman in a red dress</figcaption>
 </figure>
 
 The test program:
