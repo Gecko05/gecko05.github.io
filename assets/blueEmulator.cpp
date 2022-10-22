@@ -39,7 +39,8 @@ uint16_t program0[6] = {
 	0xA000
 };
 
-uint8_t get_instruction() {
+uint8_t get_instruction()
+{
 	return ((IR & 0xF000) >> 12);
 }
 
@@ -92,10 +93,10 @@ void process_tick(uint8_t tick)
 	default:
 		break;
 	}
-    uint8_t INS = get_instruction();
+	uint8_t INS = get_instruction();
 	if (INS == 15) {
-        do_NOP(tick);
-    }
+		do_NOP(tick);
+	}
 	else if (INS == 10) {
 		do_JMP(tick);
 	}
@@ -124,12 +125,13 @@ void runProgram(const uint16_t* program)
 	memset(RAM, 0x00, RAM_LENGTH * sizeof(uint16_t));
 	memmove(RAM, program, (RAM_LENGTH * sizeof(uint16_t)));
 	for (;;) {
-        emulateCycle();
-        dumpRegisters();
-    }
+		emulateCycle();
+		dumpRegisters();
+	}
 }
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[])
+{
     runProgram(program0);
     return 0;
 }

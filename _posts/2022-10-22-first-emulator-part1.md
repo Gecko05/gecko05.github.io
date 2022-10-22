@@ -161,7 +161,8 @@ void do_NOP(uint8_t tick)
 ```
 Basically, if we're at step 8, we'll just update the MAR. Now let's attach it to our *process_tick* function. First we define a function to help us know the number of the instruction we're processing. For example, NOP is instruction number 15 in decimal, 0F in hexadecimal or 17 in octal.
 ```
-uint8_t get_instruction() {
+uint8_t get_instruction()
+{
 	return ((IR & 0xF000) >> 12);
 }
 ```
@@ -226,7 +227,8 @@ void runProgram(const uint16_t* program)
 	}
 }
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[])
+{
 	runProgram(program0);
 	return 0;
 }
