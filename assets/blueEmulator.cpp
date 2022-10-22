@@ -51,11 +51,11 @@ void do_NOP(uint8_t tick)
 
 void do_JMP(uint8_t tick)
 {
-	if (tick == 5) {
+	if (tick == 6) {
 		PC = 0;
-	} else if (tick == 6) {
-		PC = (IR & 0x0FFF);
 	} else if (tick == 7) {
+		PC = (IR & 0x0FFF);
+	} else if (tick == 8) {
 		MAR = PC;
 	}
 }

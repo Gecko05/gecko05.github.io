@@ -178,8 +178,8 @@ void process_tick(uint8_t tick)
 	}
 	uint8_t INS = get_instruction();
 	if (INS == 15) {
-        do_NOP(tick);
-    }
+		do_NOP(tick);
+	}
 }
 ```
 There are better, more maintainable ways of doing this other than a bunch of if/else statements for every instruction. We'll see that in the next post once we start introducing more instructions, or you can just take a peek at the emulator's repo ;).
@@ -221,13 +221,14 @@ void runProgram(const uint16_t* program)
 	memset(RAM, 0x00, RAM_LENGTH * sizeof(uint16_t));
 	memmove(RAM, program, (RAM_LENGTH * sizeof(uint16_t)));
 	for (;;) {
-        emulateCycle();
-        dumpRegisters();
-    }
+		emulateCycle();
+		dumpRegisters();
+	}
+}
 
 int main(int argc, char* argv[]) {
-    runProgram(program0);
-    return 0;
+	runProgram(program0);
+	return 0;
 }
 ```
 We can do all sort of quality of life additions at this point, for example, in the original repo I coded some sort of gdb replica to step instruction by instruction without needing to actually debug the emulator. But I guess I'll leave this for later once the instructions start to get more complicated. 
@@ -254,11 +255,11 @@ To spice things up let's implement the JMP instruction.
 ```
 void do_JMP(uint8_t tick)
 {
-	if (tick == 5) {
+	if (tick == 6) {
 		PC = 0;
-	} else if (tick == 6) {
-		PC = (IR & 0x0FFF);
 	} else if (tick == 7) {
+		PC = (IR & 0x0FFF);
+	} else if (tick == 8) {
 		MAR = PC;
 	}
 }
