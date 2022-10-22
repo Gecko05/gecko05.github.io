@@ -222,7 +222,7 @@ We can do all sort of quality of life additions at this point, for example, in t
 Time to see our emulator in action. Compile it with g++ or any C++ compiler you have available and run the executable!
 
 <figure>
-    <img src="/assets/images/emulatorOutput.png" alt="Emulator Output" width="500px">
+    <img src="/assets/images/emulatorOutput.png" alt="Emulator Output" width="700px">
     <figcaption>Humble beginnings</figcaption>
 </figure>
 
@@ -281,7 +281,7 @@ uint16_t program0[6] = {
 This program should skip 0xF005 and jump into 0xF010, then jump back to the beginning looping infinitely. Let's verify it works with our debug information.
 
 <figure>
-    <img src="/assets/images/blueLoop.png" alt="Blue loop" width="500px">
+    <img src="/assets/images/blueLoop.png" alt="Blue loop" width="700px">
     <figcaption>It just works</figcaption>
 </figure>
 
