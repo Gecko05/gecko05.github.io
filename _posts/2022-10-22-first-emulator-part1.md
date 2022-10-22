@@ -308,4 +308,4 @@ The end result for this part should look something like [this](https://github.co
 
 Extending the emulator and adding more instructions will start making our program harder to debug and modify. In the next part of this tutorial we'll go through the process of adding more instructions to our emulator and making things a little bit more maintainable. We'll also eventually reach the part where we need to handle IO data, and there are a ton of ways to tackle this topic.
 
-Take a look at the [finished emulator](https://github.com/Gecko05/BlueFPGA) or continue fleshing out your emulator in any way you want. You could even define new instruction sets, create a pipeline, change the RAM size, etc. Sky is the limit!
+Take a look at the [finished emulator](https://github.com/Gecko05/BlueFPGA/tree/master/SoftBlue) or continue fleshing out your emulator in any way you want. You could even define new instruction sets, create a pipeline, change the RAM size, etc. Sky is the limit!
