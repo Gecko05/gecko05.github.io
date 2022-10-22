@@ -48,15 +48,15 @@ As a nerd, my first interest in Poland sparked when I started playing The Witche
 
 <p>The next day, I started feeling sick, jetlag hit me pretty hard and amplified my anxiety, I just didn't have the energy to get up from bed and start walking around the city. The sunset happened around 3:30pm and it was too cold outside, so I felt like sleeping a lot for the first three days of my vacations, what a waste. Also I started having this weird feeling about being "no one" outside of Mexico, as if my enviroment dictated who I was.</p>
 
-<p>At the hostel, I also met a Peruvian guy that just moved from Spain to Poland and enjoyed to spend his free nights at Poznan, and an old Polish guy who tried to flirt with me and complimented my brown skin for the first time, haha I didn't know I was so exotic!</p>
+<p>At the hostel, I met a Peruvian guy that just moved from Spain to Poland and enjoyed to spend his free nights at Poznan, and an old Polish guy who tried to flirt with me and complimented my brown skin for the first time, haha I didn't know I was so exotic!</p>
 
 <p>Then I moved out of the hostel and stayed at a hotel for the rest of my stay. On the way to the hotel I felt a bit misserable, I felt like I was wasting my vacations, in the same fashion as I felt about wasting my free time in Mexico. I had been sick with a flu and sleeping almost all day long, going out to get to know the old town just ocassionally. I started missing my family, my friends and being in a place where I would have no stress communicating with people. </p>
 </div>
 
-## Getting used to a new home
+## Getting used to a new environment
 
 <div style="text-align: justify"> 
-<p>At the hotel I got used to the hour difference and things started to look brighter for me. The breakfast at the hotel was nice, practiced talking Polish with some random people, and I got to know Poznan better. I also met a guy from Mexico who was also on vacations, he was visiting his sister who already lived in Poland. This helped me a lot since we went out to eat some pierogi, meet a Polish friend of his, and I got to talk plenty of spanish. Also, in the following days I would meet with my best Polish friend with whom I had been talking for almost a year now. Around this time my anxiety levels started to drop and something clicked on my head; I'm just the same old me, and maybe even a more interesting and well-rested version of me in Poland and wherever I go, I always have the chance to define myself with every decision.</p>
+<p>At the hotel I got used to the hour difference and things started to look brighter for me. The breakfast at the hotel was nice, practiced talking Polish with some random people, and I got to know Poznan better. Also I met a guy from Mexico who was on vacations too, he was visiting his sister who already lived in Poland. We went out to eat some pierogi, meet a Polish friend of his, and I got to talk plenty of spanish. In the following days I would meet with my best Polish friend with whom I had been talking for almost a year now. Around this time my anxiety started to drop and something clicked on my head; I'm just the same old me, and maybe even a more interesting and well-rested version of me in Poland and wherever I go.</p>
 </div>
 
 ![Church](/assets/images/churchWow.jpeg){:class="img-responsive" width="400px"}
