@@ -67,24 +67,24 @@ void process_tick(uint8_t tick)
 	case 1:
 		break;
 	case 2:
-		break;
-	case 3:
 		if (STATE == FETCH)
 			PC += 1;
 		break;
-	case 4:
+	case 3:
 		if (STATE == FETCH)
 			MBR = 0x00;
 		break;
-	case 5:
+	case 4:
 		if (STATE == FETCH) {
 			IR = 0x00;
 			MBR = RAM[MAR]; // The Clear in step 4 also means updating MBR in the next step
 		}
 		break;
-	case 6:
+	case 5:
 		if (STATE == FETCH)
 			IR = MBR;
+		break;
+	case 6:
 		break;
 	case 7:
 		break;
