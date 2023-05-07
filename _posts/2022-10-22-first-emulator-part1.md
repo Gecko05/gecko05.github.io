@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Making your first emulator Part I"
+title: "Writing your first emulator Part I"
 author: Jaime Centeno
 ---
 
