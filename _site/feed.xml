@@ -1,33 +1,410 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2021-10-31T14:42:23-06:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Gecko05 Blog</title><subtitle>Here you will find blog entries about personal projects ranging from low level programming to simple games.</subtitle><entry><title type="html">Developing a computer inside an FPGA</title><link href="http://localhost:4000/2021/10/07/fpga-computer.html" rel="alternate" type="text/html" title="Developing a computer inside an FPGA" /><published>2021-10-07T00:00:00-05:00</published><updated>2021-10-07T00:00:00-05:00</updated><id>http://localhost:4000/2021/10/07/fpga-computer</id><content type="html" xml:base="http://localhost:4000/2021/10/07/fpga-computer.html">&lt;p&gt;Almost a year ago I started working on a new project to improve my understanding of computer architecture and VHDL programming. I’ve not always been interested in using FPGAs, unfortunately, at university I didn’t even understand what the difference between a processor and an FPGA was.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2023-05-07T11:23:52-06:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Gecko05 Blog</title><subtitle>Blog entries for personal projects ranging from low level programming to simple games.</subtitle><entry><title type="html">Making your first emulator Part I</title><link href="http://localhost:4000/2022/10/22/first-emulator-part1.html" rel="alternate" type="text/html" title="Making your first emulator Part I" /><published>2022-10-22T00:00:00-05:00</published><updated>2022-10-22T00:00:00-05:00</updated><id>http://localhost:4000/2022/10/22/first-emulator-part1</id><content type="html" xml:base="http://localhost:4000/2022/10/22/first-emulator-part1.html">&lt;p&gt;I decided to make these posts to walk you through the process of creating a simple emulator for a simple processor: &lt;a href=&quot;https://www.amazon.com/Computer-architecture-science-Caxton-Foster/dp/B0006C2T2O&quot;&gt;1970 Caxton C. Foster’s Blue&lt;/a&gt;.
+Think of this tutorial as a way to give you ideas on how to write an emulator, when I started writing this I knew emulators existed and I was familiar with programming, but I just didn’t know where to begin. So if you feel like how I felt, I hope this post can help you and make things more clear.&lt;/p&gt;
 
-&lt;p&gt;As I started learning more about low level programming and videogames, I came up with this idea of developing an emulator for the NES inside an FPGA to play on the “original” hardware withouth having to find and maintain one. However, my computer architecture and VHDL skills at the time were almost non-existent, so I decided to start with a simpler project.&lt;/p&gt;
+&lt;p&gt;We’re going to code an emulator in C++, but the approach used here can be applied to any language, some familiarity with computer architecture concepts and of course programming may be needed to follow this post.&lt;/p&gt;
 
-&lt;p&gt;After searching for projects, I came across &lt;a href=&quot;https://hackaday.com/2016/03/16/crawl-walk-run-planning-your-first-cpu-design/&quot;&gt;this article&lt;/a&gt; from Al Williams on &lt;a href=&quot;https://hackaday.com/&quot;&gt;Hackaday&lt;/a&gt;. Al suggested starting with a basic computer (Blue), one that Caxton C.Foster specified in his really old book “Computer Architecture”. I was unable to find this book physically at an affordable price, but eventually I found it on archive.org, what a great site!&lt;/p&gt;
+&lt;h2 id=&quot;blues-architecture&quot;&gt;Blue’s architecture&lt;/h2&gt;
 
-&lt;p&gt;So I started programming, I created &lt;a href=&quot;https://github.com/Gecko05/BlueFPGA&quot;&gt;this repository&lt;/a&gt; and starting translater the simplest parts of the logic gates diagrams to VHDL programs. Sites like nandland.com and vhdlwhiz.com have been especially helpful in teaching me the basics of VHDL development and get me ready to write this project.&lt;/p&gt;
+&lt;p&gt;Blue is a simple and underpowered machine, but it still reflects the core concept of how computers work. In order to 
+write something that will ressemble the original hardware, we first need to know the innards of the design.&lt;/p&gt;
 
-&lt;h2 id=&quot;the-simple-stuff&quot;&gt;The simple stuff&lt;/h2&gt;
+&lt;p&gt;These are the specs:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;4096 words of addressed core storage of 16 bits per word.&lt;/li&gt;
+  &lt;li&gt;Words in data storage as treated as 15-bit integers plus sign.&lt;/li&gt;
+  &lt;li&gt;Instructions are 4 bit OP code with 12 bit address (4096).&lt;/li&gt;
+  &lt;li&gt;16-bit Acc.&lt;/li&gt;
+  &lt;li&gt;16-bit instruction register.&lt;/li&gt;
+  &lt;li&gt;12-bit program counter.&lt;/li&gt;
+  &lt;li&gt;12-bit Memory Address Register, 16-bit Memory Buffer Register and a 16-bit Z register that are not accessible to the programmer.&lt;/li&gt;
+  &lt;li&gt;16 different instructions for the 4-bit OPCode.&lt;/li&gt;
+  &lt;li&gt;Two’s complement interpretation.&lt;/li&gt;
+&lt;/ul&gt;
 
-&lt;p&gt;The first thing I did was read through the specification and writing down notes on how the computer really works. There are a lot of nice diagramas and tables which I copied into the repositories REAME file to keep the important stuff handy and organized.&lt;/p&gt;
+&lt;p&gt;And here’s the instruction set:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Octal representation for Op code&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;00-HLT XXXX&lt;/strong&gt;: The computer will halt. The START button on the console will cause the computer to start going again, beginning with the instruction following the HLT.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;01-ADD XXXX&lt;/strong&gt;: The contents of XXXX are added tot the contents of the accumulator and the sum is put into the accumulator. If the result is greater than 2^15-1 or less than -2^15 the machine stops.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;02-XOR XXXX&lt;/strong&gt;: Exclusive OR of the contents of XXXX and Acc replace Acc.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;03-AND XXXX&lt;/strong&gt;: AND between address and Acc, replace Acc.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;04-IOR XXXX&lt;/strong&gt;: OR&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;05-NOT XXXX&lt;/strong&gt;: Acc is inverted&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;06-LDA XXXX&lt;/strong&gt;: Loads addresss into the Acc.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;07-STA XXXX&lt;/strong&gt;: Acc is copied to Address. Acc remains unchanged.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;10-SRJ XXXX&lt;/strong&gt;: Contents of program counter(present instruction location plus one) are ORed into 12 Acc bits. XXXX is copied into the program counter, used to jump.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;11-JMA XXXX&lt;/strong&gt;: If the sign bit of the Acc is one, the number XXXX is placed in the program counter. Else, does nothing.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;12-JMP XXXX&lt;/strong&gt;: Jumps to address XXXX&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;13-INP XXYY&lt;/strong&gt;: Upper 8 bits of the Acc are cleared and the next 8-bit character from input device YY is entered into the low end of Acc. The XX part of the field is ignored. Blocks until transfer is complete.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;14-OUT XXYY&lt;/strong&gt;: The upper 8 bits of the Acc are sent to output device YY. The XX is ignored. Blocks until the device accepts data.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;15-RAL XXXX&lt;/strong&gt;: Acc is rotated left one place.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;16-CSA XXXX&lt;/strong&gt;: The number set into the console switch register replaces the contents of the accumulator.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;17-NOP XXXX&lt;/strong&gt;: Does nothing.&lt;/li&gt;
+&lt;/ul&gt;
 
-&lt;p&gt;Some relevant information about Blue:
-    - 4096 words of addressed core storage of 16 bits per word
-    - Words in data storage as treated as 15-bit integers plus sign
-    - Instructions are 4 bit OP code with 12 bit address (4096).
-    - 16-bit Acc
-    - 16-bit instruction register
-    - 12-bit program counter
-    - 12-bit Memory Address Register, 16-bit Memory Buffer Register and a 16-bit Z register that are not accessible to the programmer.
-    - 16 different instructions for the 4-bit OPCode.
-    - If the highest bit is 1, the number is negative.&lt;/p&gt;
+&lt;p&gt;Now, the real implementation innards are kinda complicated, we have tons of logic gates and buses inside Blue,  you can check &lt;a href=&quot;https://github.com/Gecko05/BlueFPGA&quot;&gt;this repo&lt;/a&gt; for more details. This makes the task of writing a hardware emulator much more complicated than writing a software emulator, at least a software emulator that only cares about interpreting programs and outputs. You can read about my attempt of a &lt;a href=&quot;https://gecko05.github.io/2021/10/07/fpga-computer.html&quot;&gt;failed hardware emulator here&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;As you can see Blue is a really simple computer, perfect for beginners in computer architecture. To be honest, I wasn’t expecting things inside a comptuer to be as simple as they are, with a bunch of logic diagrams, Caxton C.Foster is able to describe the basic components of a complex machine.&lt;/p&gt;
+&lt;p&gt;For this exercise, we don’t really care about implementing all the buses and gate logic, we’re only worried about handling the registers properly
+and following what the specification tells us about how each instruction is interpreted.&lt;/p&gt;
 
-&lt;p&gt;At this point, my motivation peaked and I started to get a lot of “aha” moments, I thought everything was sorted out for me inside these logic diagrams and I was ready to jump into the code and start programming.&lt;/p&gt;
+&lt;h2 id=&quot;emulating-our-first-cycle&quot;&gt;Emulating our first cycle&lt;/h2&gt;
 
-&lt;h2 id=&quot;the-pain-of-initialization&quot;&gt;The pain of initialization&lt;/h2&gt;
+&lt;p&gt;Let’s start with the simple stuff. We’ll forget about any input/output handling and start by coding the core of our emulator, the function
+that will emulate the instruction cycle. That is, covering the steps that will be needed to process a whole instruction. We’ll begin by emulating the FETCH cycle.&lt;/p&gt;
 
-&lt;p&gt;Setting up the tools and stuff you need to actually do the coding can be really tedious. For this project I ordered an FPGA from numato, specifically, the MimasV2. It’s comes with a nice board full of io components to test your designs and has worked really well so far.&lt;/p&gt;</content><author><name>Jaime Centeno</name></author><summary type="html">Almost a year ago I started working on a new project to improve my understanding of computer architecture and VHDL programming. I’ve not always been interested in using FPGAs, unfortunately, at university I didn’t even understand what the difference between a processor and an FPGA was.</summary></entry><entry><title type="html">Gauss Synth - Puzzle game in Pico8</title><link href="http://localhost:4000/2020/03/31/gauss-synth.html" rel="alternate" type="text/html" title="Gauss Synth - Puzzle game in Pico8" /><published>2020-03-31T00:00:00-06:00</published><updated>2020-03-31T00:00:00-06:00</updated><id>http://localhost:4000/2020/03/31/gauss-synth</id><content type="html" xml:base="http://localhost:4000/2020/03/31/gauss-synth.html">&lt;iframe src=&quot;https://www.lexaloffle.com/bbs/widget.php?pid=gaussynth&quot; allowfullscreen=&quot;&quot; width=&quot;621&quot; height=&quot;513&quot; style=&quot;border:none; overflow:hidden&quot;&gt;&lt;/iframe&gt;
+&lt;p&gt;Each cycle is made of 8 smaller steps, each step’s timing is defined by a clock and 8 lines that represent each of the steps. Every time Blue’s clock ticks, a line is set to HIGH and the others to LOW, this can be easily represented by a counter variable that increments from 1 to 8 and then it’s reset back to 1.&lt;/p&gt;
+
+&lt;p&gt;So, our emulated cycle will look as follows:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;uint8_t clock_pulse = 1;
+
+void emulateCycle()
+{
+	while (clock_pulse &amp;lt; 9)
+	{
+		process_tick(clock_pulse);
+		clock_pulse++;
+	}
+	clock_pulse = 1;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;As you can see a major cycle will consist of a loop of 8 smaller steps, each iteration we’ll call &lt;em&gt;process_tick&lt;/em&gt; to execute any step defined by our instruction. Each instruction does different things at each step of the cycle and both cycles are made of 8 steps, so we can leave all the implementation details of FETCH/EXECUTE to this &lt;em&gt;process_tick&lt;/em&gt; function.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://github.com/Gecko05/BlueFPGA/raw/master/resources/028bd53753d54035b12f278d878513ba.png&quot; alt=&quot;Fetch&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Now, let’s start fleshing out some of the instructions. These are the common steps that we need to emulate for any instruction as long as the fetch cycle is active. Some instructions only need this cycle, while others need more steps and thus require an additional EXECUTE cycle.
+To achieve this, first we have to define some registers. All the registers are 16-bit wide, so uint16_t can be used as the type.&lt;/p&gt;
+
+&lt;p&gt;These are all the registers and RAM we’ll ever need for this implementation:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#define RAM_LENGTH 4096
+uint16_t RAM[RAM_LENGTH];
+
+typedef uint16_t blue_register;
+blue_register A;         // Accumulator - For arithmetics, calculations
+blue_register DIL;       // Data-In - To receive input data
+blue_register DOL;       // Data-Out - To output data
+blue_register DSL;       // Device Selector - To select IO device
+blue_register IR;        // Instruction Register - Stores the current instruction and it&apos;s operands
+blue_register MAR;       // Memory Address Register - Tells us which RAM address to read
+blue_register MBR;       // Memory Buffer Register - Actual RAM contents as pointed by MAR
+blue_register PC = 0x00; // Program Counter - To perform jumps and handle instruction numbers
+blue_register SR;        // Console Switch Register - To input data manually
+blue_register Z;         // Z register - Auxiliary register for calculations
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;I went a bit too fancy with the typedef instead of using plain uint16_t, but that’s totally optional. I just thought it would be more readable that way.&lt;/p&gt;
+
+&lt;p&gt;Inside &lt;em&gt;process_tick&lt;/em&gt; we’ll code the logic for executing the common steps for FETCH cycles. So we also need to define the states and a variable to hold the current state.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;typedef enum {
+	EXECUTE,
+	FETCH,
+} State;
+
+State STATE = FETCH;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now let’s code the common steps.&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;void process_tick(uint8_t tick)
+{
+	switch (tick) {
+	case 1:
+		break;
+	case 2:
+		if (STATE == FETCH)
+			PC += 1;
+		break;
+	case 3:
+		if (STATE == FETCH)
+			MBR = 0x00;
+		break;
+	case 4:
+		if (STATE == FETCH) {
+			IR = 0x00;
+			MBR = RAM[MAR]; // The Clear in step 4 also means updating MBR in the next step
+		}
+		break;
+	case 5:
+		if (STATE == FETCH)
+			IR = MBR;
+		break;
+	case 6:
+		break;
+	case 7:
+		break;
+	case 8:
+		break;
+	default:
+		break;
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;You’ll notice that we’re missing the part where the Memory Address Register is updated based on the Program Counter, without this, we’re stuck executing the same instruction again and again. However, this is a instruction-specific operation, so we need to start implementing the actual instructions if we want to advance through our program.&lt;/p&gt;
+
+&lt;h2 id=&quot;emulating-the-nop-instruction&quot;&gt;Emulating the NOP instruction&lt;/h2&gt;
+
+&lt;p&gt;Let’s implement the easiest instruction first, the NOP instruction.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://github.com/Gecko05/BlueFPGA/raw/master/resources/9887f70e74ef4431b4aebd180116f503.png&quot; alt=&quot;NOP&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;According to the spec, the NOP instruction does nothing when executed, so we only need to care about updating the MAR with the contents of the Program Counter so that the next instruction is executed after we’re done with NOP. This is the code we’ll need:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;void do_NOP(uint8_t tick)
+{
+	if (tick == 8)
+		MAR = PC;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Basically, if we’re at step 8, we’ll just update the MAR. Now let’s attach it to our &lt;em&gt;process_tick&lt;/em&gt; function. First we define a function to help us know the number of the instruction we’re processing. For example, NOP is instruction number 15 in decimal, 0F in hexadecimal or 17 in octal.&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;uint8_t get_instruction()
+{
+	return ((IR &amp;amp; 0xF000) &amp;gt;&amp;gt; 12);
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Now let’s use it in an if statement to execute our instruction. To do so, we’ll modify &lt;em&gt;process_tick&lt;/em&gt; as follows:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;void process_tick(uint8_t tick)
+{
+	...
+
+	case 7:
+		break;
+	default:
+		break;
+	}
+	uint8_t INS = get_instruction();
+	if (INS == 15) {
+		do_NOP(tick);
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;There are better, more maintainable ways of doing this other than a bunch of if/else statements for every instruction. We’ll see that in the next post once we start introducing more instructions, or you can just take a peek at the emulator’s repo ;).&lt;/p&gt;
+
+&lt;p&gt;Now, let’s code the “infrastructure” we need to load a program and run it inside our emulator!
+Time to see the matrix! Our test program will be just a bunch of NOP instructions with random operands as you can &lt;em&gt;clearly&lt;/em&gt; see. What we’ll use a test program is basically just machine code, we’re writing the instructions by hand using hexadecimal numbers. There’s an opportunity to create an assembler program that lets us write in “assembly” instead of plain numbers, but we’ll cover that later.&lt;/p&gt;
+
+&lt;figure&gt;
+    &lt;img src=&quot;/assets/images/matrix.png&quot; alt=&quot;See the matrix&quot; width=&quot;400px&quot; /&gt;
+    &lt;figcaption&gt;Ah yes, that&apos;s a woman in a red dress&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;NOP takes no operands so their presence shouldn’t really affect the instruction, they’ll simply be ignored.
+The test program:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;// The first nibble of the most significant byte holds the
+// instruction. The rest is just operands.
+// F0 03 means NOP with a 3 as an operand
+// 17 00 03 in Octal
+
+// Sample program
+uint16_t program0[4] = {
+	0xF000, // NOP 000
+	0xF003, // NOP 003
+	0xF000, // NOP 000
+	0xF005  // NOP 005
+};
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;We now need a way to load the program into the RAM and actually execute it.
+This will run our program in an infinite loop and give us debug information about the registers on every cycle:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;void dumpRegisters()
+{
+	printf(&quot;PC: %04x A: %04x IR: %04x Z: %04x MAR: %04x MBR: %04x DSL: %02x DIL: %02x DOL: %02x\n&quot;, PC, A, IR, Z, MAR, MBR, (DSL &amp;amp; 0x00FF), (DIL &amp;amp; 0x00FF), (DOL &amp;amp; 0x00FF));
+}
+
+void runProgram(const uint16_t* program)
+{
+	std::cout &amp;lt;&amp;lt; &quot;Copying program to the RAM\n&quot;;
+	memset(RAM, 0x00, RAM_LENGTH * sizeof(uint16_t));
+	memmove(RAM, program, (RAM_LENGTH * sizeof(uint16_t)));
+	for (;;) {
+		emulateCycle();
+		dumpRegisters();
+	}
+}
+
+int main(int argc, char* argv[])
+{
+	runProgram(program0);
+	return 0;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;We can do all sort of quality of life additions at this point, for example, in the original repo I coded some sort of gdb replica to step instruction by instruction without needing to actually debug the emulator. But I guess I’ll leave this for later once the instructions start to get more complicated.&lt;/p&gt;
+
+&lt;p&gt;Time to see our emulator in action. Compile it with g++ or any C++ compiler you have available and run the executable!&lt;/p&gt;
+
+&lt;figure&gt;
+    &lt;img src=&quot;/assets/images/emulatorOutput.png&quot; alt=&quot;Emulator Output&quot; width=&quot;700px&quot; /&gt;
+    &lt;figcaption&gt;Humble beginnings&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;Even though this doesn’t look too impressive, it’s exciting enough! From the output you can see how the contents of the Memory Buffer Register, Instruction Register, Memory Address Register and Program Counter change with each cycle. Although the NOP instruction does nothing, we can be sure that the instructions are being read from the RAM and the PC has an effect on the MAR.&lt;/p&gt;
+
+&lt;h2 id=&quot;emulating-the-jmp-instruction&quot;&gt;Emulating the JMP instruction&lt;/h2&gt;
+
+&lt;p&gt;To spice things up let’s implement the JMP instruction.&lt;/p&gt;
+
+&lt;figure&gt;
+    &lt;img src=&quot;/assets/images/jumpIns.png&quot; alt=&quot;Jump Instruction&quot; width=&quot;250px&quot; /&gt;
+    &lt;figcaption&gt;Look ma, jumping is so simple!&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;void do_JMP(uint8_t tick)
+{
+	if (tick == 6) {
+		PC = 0;
+	} else if (tick == 7) {
+		PC = (IR &amp;amp; 0x0FFF);
+	} else if (tick == 8) {
+		MAR = PC;
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;This is a fun instruction that will let us jump around the code, allowing us to create all sorts of loops in our code. Now, let’s add it to our &lt;em&gt;process_tick&lt;/em&gt; routine.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;void process_tick(uint8_t tick)
+{
+    ...
+	uint8_t INS = get_instruction();
+	if (INS == 15) {
+		do_NOP(tick);
+	}
+	else if (INS == 10) {
+		do_JMP(tick);
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And finally, we change our program to include some jump instructions, compile and run the emulator!&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;// Sample program
+uint16_t program0[6] = {
+	0xF000, // Instruction #0
+	0xF003,
+	0xA004, // Jump to instruction #4 (fifth one)
+	0xF005, // This shouldn&apos;t be executed
+	0xF010,
+	0xA000 // Jump back to instruction #0
+};
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;This program should skip 0xF005 and jump into 0xF010, then jump back to the beginning looping infinitely. Let’s verify it works with our debug information.&lt;/p&gt;
+
+&lt;figure&gt;
+    &lt;img src=&quot;/assets/images/blueLoop.png&quot; alt=&quot;Blue loop&quot; width=&quot;700px&quot; /&gt;
+    &lt;figcaption&gt;It just works&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;Finally some tasty instructions! As you can see, we’re jumping twice, the first jump will skip instruction 0xF005, then the second jump loops us back to the first instruction 0xF000.&lt;/p&gt;
+
+&lt;p&gt;The end result for this part should look something like &lt;a href=&quot;https://github.com/Gecko05/gecko05.github.io/tree/master/assets/blueEmulator.cpp&quot;&gt;this&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;to-be-continued&quot;&gt;To be continued…&lt;/h2&gt;
+
+&lt;p&gt;Extending the emulator and adding more instructions will start making our program harder to debug and modify. In the next part of this tutorial we’ll go through the process of adding more instructions to our emulator and making things a little bit more maintainable. We’ll also eventually reach the part where we need to handle IO data, and there are a ton of ways to tackle this topic.&lt;/p&gt;
+
+&lt;p&gt;Take a look at the &lt;a href=&quot;https://github.com/Gecko05/BlueFPGA/tree/master/SoftBlue&quot;&gt;finished emulator&lt;/a&gt; or continue fleshing out your emulator in any way you want. You could even define new instruction sets, create a pipeline, change the RAM size, etc. Sky is the limit!&lt;/p&gt;</content><author><name>Jaime Centeno</name></author><summary type="html">I decided to make these posts to walk you through the process of creating a simple emulator for a simple processor: 1970 Caxton C. Foster’s Blue. Think of this tutorial as a way to give you ideas on how to write an emulator, when I started writing this I knew emulators existed and I was familiar with programming, but I just didn’t know where to begin. So if you feel like how I felt, I hope this post can help you and make things more clear.</summary></entry><entry><title type="html">Developing a computer inside an FPGA</title><link href="http://localhost:4000/2021/10/07/fpga-computer.html" rel="alternate" type="text/html" title="Developing a computer inside an FPGA" /><published>2021-10-07T00:00:00-05:00</published><updated>2021-10-07T00:00:00-05:00</updated><id>http://localhost:4000/2021/10/07/fpga-computer</id><content type="html" xml:base="http://localhost:4000/2021/10/07/fpga-computer.html">&lt;div style=&quot;text-align: justify&quot;&gt;
+&lt;p&gt;
+A little more than a year ago I started working (on and off) on a new project to improve my understanding of computer architecture and VHDL programming. I&apos;ve not always been interested in using FPGAs and unfortunately, at university I didn&apos;t quite grasp the purpose of FPGA programming. 
+&lt;/p&gt;&lt;p&gt;
+As I started learning more about low level programming and videogames, I came up with the idea of developing an emulator for the NES inside an FPGA to play on the &quot;original&quot; hardware withouth having to find and maintain one. However, my computer architecture and VHDL skills at the time were almost non-existent, so I decided to start with a simpler project.
+&lt;/p&gt;
+&lt;figure&gt;
+    &lt;img src=&quot;/assets/images/nes_console.jpg&quot; alt=&quot;NES&quot; width=&quot;500px&quot; /&gt;
+    &lt;figcaption&gt;Man, I wish that my dad hadn&apos;t thrown away my NES&lt;/figcaption&gt;
+&lt;/figure&gt; 
+&lt;p&gt;
+After searching for projects, I came across &lt;a href=&quot;https://hackaday.com/2016/03/16/crawl-walk-run-planning-your-first-cpu-design/&quot;&gt;this article&lt;/a&gt; from Al Williams on &lt;a href=&quot;https://hackaday.com&quot;&gt;Hackaday&lt;/a&gt;. Al suggested starting with a basic computer (BLUE), one that Caxton C. Foster specified in his book &quot;Computer Architecture&quot;. I was unable to find this book physically at an affordable price, but eventually I found a borrowable version on &lt;a href=&quot;https://archive.org&quot;&gt;archive.org&lt;/a&gt;, I love this site! 
+&lt;/p&gt;&lt;p&gt;
+I created &lt;a href=&quot;https://github.com/Gecko05/BlueFPGA&quot;&gt;this repository&lt;/a&gt; and started translating the simplest parts of the logic gate diagrams to VHDL programs. Sites like &lt;a href=&quot;https://nandland.com&quot;&gt;nandland.com&lt;/a&gt; and &lt;a href=&quot;https://vhdlwhiz.com&quot;&gt;vhdlwhiz.com&lt;/a&gt; have been especially helpful in teaching me the basics of VHDL development and getting me ready to write this project.
+&lt;/p&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;reinventing-the-wheel&quot;&gt;Reinventing the wheel&lt;/h2&gt;
+
+&lt;div style=&quot;text-align: justify&quot;&gt;
+&lt;p&gt;
+The first thing I did was read through the specification and writing down notes on how the computer really works. There are a lot of nice diagramas and tables which I copied into the repositories README file to keep the important stuff accessible and organized. 
+&lt;/p&gt;&lt;/div&gt;
+&lt;h4 id=&quot;some-relevant-info-about-blue&quot;&gt;Some relevant info about BLUE&lt;/h4&gt;
+&lt;ul&gt;
+  &lt;li&gt;4096 words of addressed core storage of 16 bits per word.&lt;/li&gt;
+  &lt;li&gt;Words in data storage as treated as 15-bit integers plus sign.&lt;/li&gt;
+  &lt;li&gt;Instructions are 4 bit OP code with 12 bit address (4096).&lt;/li&gt;
+  &lt;li&gt;16-bit Acc.&lt;/li&gt;
+  &lt;li&gt;16-bit instruction register.&lt;/li&gt;
+  &lt;li&gt;12-bit program counter.&lt;/li&gt;
+  &lt;li&gt;12-bit Memory Address Register, 16-bit Memory Buffer Register and a 16-bit Z register that are not accessible to the programmer.&lt;/li&gt;
+  &lt;li&gt;16 different instructions for the 4-bit OPCode.&lt;/li&gt;
+  &lt;li&gt;If the highest bit is 1, the number is negative.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;figure&gt;
+    &lt;img src=&quot;/assets/images/instruction_tree.png&quot; alt=&quot;Instruction tree&quot; width=&quot;200px&quot; /&gt;
+    &lt;figcaption&gt;Ha! Was it really that simple?&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;div style=&quot;text-align: justify&quot;&gt;
+&lt;p&gt;
+As you can see BLUE is a really simple computer, perfect for beginners in computer architecture. To be honest, I wasn&apos;t expecting things inside a computer to be as simple as they are, with a bunch of logic diagrams, we&apos;re able to build complex units that handle rather abstact tasks like arithmetic operations.
+&lt;/p&gt;&lt;p&gt;
+At this point, my motivation peaked and I started to get a lot of &quot;aha!&quot; moments, I thought everything was sorted out for me inside these logic diagrams and I was ready to jump into the code and start programming.
+&lt;/p&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;morning-stiffness&quot;&gt;Morning stiffness&lt;/h2&gt;
+
+&lt;div style=&quot;text-align: justify&quot;&gt;
+&lt;p&gt;
+As always, setting up the tools and stuff you need to actually do the coding can be really tedious. For this project I ordered an FPGA from Numato, specifically, the &lt;a href=&quot;https://numato.com/product/mimas-v2-spartan-6-fpga-development-board-with-ddr-sdram/&quot;&gt;MimasV2&lt;/a&gt;. It comes with a nice board full of IO components to test your designs and has worked really well so far. I can&apos;t tell yet if this board is enough to support a full NES emulator though. One of the struggles I faced was setting up the software I needed to write the code, flash the FPGA and also sort out how things worked overall. It had been a while since I last used Xilinx ISE, and I had never used it before on a Linux machine. 
+&lt;/p&gt;&lt;/div&gt;
+&lt;figure&gt;
+    &lt;img src=&quot;https://numato.com/wp-content/uploads/2020/08/MimasV2_2-2-1.png&quot; alt=&quot;MimasV2&quot; width=&quot;500px&quot; /&gt;
+    &lt;figcaption&gt;Aesthetic, isn&apos;t it?&lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;div style=&quot;text-align: justify&quot;&gt;
+&lt;p&gt;
+Once I got ISE ready to go, I tried to figure out how to actually flash the FPGA with the binary file that is generated from the VHDL code. At first I tried to run a Python utility &quot;provided&quot; by Numato to flash their devices, but I just couldn&apos;t get it running. The best tool to flash the FPGA runs only on Windows, so after giving up on the Linux tool I decided to try and run the Windows tool using Wine, it worked like a charm.
+&lt;/p&gt;&lt;p&gt;
+After doing a few beginner level FPGA projects, I felt ready to jump into programming a clock module for BLUE.
+&lt;/p&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;working-as-a-translator&quot;&gt;Working as a translator&lt;/h2&gt;
+
+&lt;div style=&quot;text-align: justify&quot;&gt;&lt;p&gt;
+While I was programming the clock module, I started to notice things wouldn&apos;t be as straightforward as copying all the logic gate diagrams to VHDL statements, or at least, that wouldn&apos;t be the easiest way to do it. I wanted to have a middleground between copying exactly the diagrams I found and simplifying things to better fit with VHDL statements.
+&lt;/p&gt;&lt;p&gt;
+From what I can gather, the clock module of BLUE is a bit unconventional, even the author suggests doing things in a different way. The important stuff is that a cycle in BLUE is made of 8 clock steps, there&apos;s a signal for each step which will be used to define what needs to be done for each instruction.
+&lt;/p&gt;&lt;/div&gt;
+
+&lt;figure&gt;
+    &lt;img src=&quot;/assets/images/steps.png&quot; alt=&quot;InstructionSteps&quot; width=&quot;500px&quot; /&gt;
+    &lt;figcaption&gt;Just need a bunch of if statements&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;div style=&quot;text-align: justify&quot;&gt;&lt;p&gt;
+The clock for BLUE in VHDL is basically a process loop that at a set minor frequency (50 MHz) rotates a bit on the clock steps signal. You could think of it as a semaphore with 8 lights that takes 0.16 micro seconds to go through all the lights, that&apos;s fast!
+&lt;/p&gt;&lt;p&gt;
+I wanted to start with the simpler instructions for this project, so the first step was coding all the necessary stuff to get the NOP, HALT, and JUMP instructions ready. 
+&lt;/p&gt;&lt;p&gt;
+As soon as I finished programming registers like the Memory Buffer Register, Memory Address Register and Program Counter, I began programming what I call the Control Unit, although I&apos;m not entirely sure if this is the right term. The Control Unit would be the part that orchestrates the interactions between all the registers, instructions and power options. Currently in my code this part of BLUE is a mess, there are too many lines of code for my test and I&apos;m sure there&apos;s a way to isolate things a little better, especially the instructions decoding part.
+&lt;/p&gt;&lt;/div&gt;
+&lt;figure&gt;
+    &lt;img src=&quot;/assets/images/buses.png&quot; alt=&quot;Buses&quot; width=&quot;500px&quot; /&gt;
+    &lt;figcaption&gt;It turns out I can&apos;t just program these buses&lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;div style=&quot;text-align: justify&quot;&gt;&lt;p&gt;
+When I began programming the CU, I noticed I wouldn&apos;t be able to actually program a Bus that connects between several registers as described in the book, at least not with my current skill level. I searched around the web on how to program such thing, but a lot of people seemed to advice towards using multiplexing instead of actually programming buses, so I followed this advice.
+&lt;/p&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;not-quite-there-yet&quot;&gt;Not quite there yet&lt;/h2&gt;
+
+&lt;div style=&quot;text-align: justify&quot;&gt;&lt;p&gt;
+After a lot of struggle and almost 45 hours of free time later, I had this basic &quot;computer&quot; that could interpret NOP, HALT, and JUMP instructions! It ain&apos;t much, but it&apos;s honest work.
+&lt;/p&gt;&lt;p&gt;
+Currently, my BLUE implementation is also able to process store/load and arithmetic instructions, I started coding the ALU and two different states for double cycle instructions like ADD. I&apos;ve learned a lot about VHDL along the way and I wish to finish coding BLUE, however, there are some challenges I need to tackle first. As I start adding more instructions, debugging becomes more and more complicated, those signal diagrams from the simulations are a bit confusing and I wonder what other ways exist to debug the whole thing. 
+&lt;/p&gt;
+&lt;figure&gt;
+    &lt;img src=&quot;/assets/images/graphs.png&quot; alt=&quot;Difficult graphs&quot; width=&quot;500px&quot; /&gt;
+    &lt;figcaption&gt;Okay this used to be way easier when I had only 4 instructions&lt;/figcaption&gt;
+&lt;/figure&gt; 
+&lt;p&gt;
+In order to ease things in the future, I plan on adding a debugging feature to dump the content of the RAM and each individual register via serial communication, and then arrange that data in some sort of user interface. This should help me debug programs and the actual behavior of the computer. Additionally I&apos;m also working on writing a C++ software emulator, which I&apos;ll describe in a later post, which is surprisingly easier to implement than the actual VHDL thing.
+&lt;/p&gt;&lt;p&gt;
+Feel free to use the project&apos;s repository as you wish, this is a learning exercise I really recommend doing to anyone interested in basic computer architecture and FPGAs. I&apos;m still far away from my actual goal of coding a hardware emulator for the NES, but it&apos;s been a really fun project to do so far and hopefully I&apos;ll be able to finish it soon. Also I started taking this course by the LinuxFoundationX that teaches how to program a RISC V processor, haven&apos;t finished it yet, but it seems to be a good way to start with computer architecture: &lt;a href=&quot;https://www.edx.org/course/building-a-risc-v-cpu-core&quot;&gt;https://www.edx.org/course/building-a-risc-v-cpu-core&lt;/a&gt;
+&lt;/p&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/Gecko05/BlueFPGA&quot;&gt;Code repository&lt;/a&gt;&lt;/p&gt;</content><author><name>Jaime Centeno</name></author><summary type="html">A little more than a year ago I started working (on and off) on a new project to improve my understanding of computer architecture and VHDL programming. I&apos;ve not always been interested in using FPGAs and unfortunately, at university I didn&apos;t quite grasp the purpose of FPGA programming. As I started learning more about low level programming and videogames, I came up with the idea of developing an emulator for the NES inside an FPGA to play on the &quot;original&quot; hardware withouth having to find and maintain one. However, my computer architecture and VHDL skills at the time were almost non-existent, so I decided to start with a simpler project. Man, I wish that my dad hadn&apos;t thrown away my NES After searching for projects, I came across this article from Al Williams on Hackaday. Al suggested starting with a basic computer (BLUE), one that Caxton C. Foster specified in his book &quot;Computer Architecture&quot;. I was unable to find this book physically at an affordable price, but eventually I found a borrowable version on archive.org, I love this site! I created this repository and started translating the simplest parts of the logic gate diagrams to VHDL programs. Sites like nandland.com and vhdlwhiz.com have been especially helpful in teaching me the basics of VHDL development and getting me ready to write this project.</summary></entry><entry><title type="html">Gauss Synth - Puzzle game in Pico8</title><link href="http://localhost:4000/2020/03/31/gauss-synth.html" rel="alternate" type="text/html" title="Gauss Synth - Puzzle game in Pico8" /><published>2020-03-31T00:00:00-06:00</published><updated>2020-03-31T00:00:00-06:00</updated><id>http://localhost:4000/2020/03/31/gauss-synth</id><content type="html" xml:base="http://localhost:4000/2020/03/31/gauss-synth.html">&lt;iframe src=&quot;https://www.lexaloffle.com/bbs/widget.php?pid=gaussynth&quot; allowfullscreen=&quot;&quot; width=&quot;621&quot; height=&quot;513&quot; style=&quot;border:none; overflow:hidden&quot;&gt;&lt;/iframe&gt;
 
 &lt;p&gt;This is a simple puzzle game made in Pico8. Inspired by Gauss Jordan elimination.&lt;/p&gt;
 
@@ -46,76 +423,76 @@
   &lt;/li&gt;
 &lt;/ul&gt;</content><author><name>Jaime Centeno</name></author><summary type="html"></summary></entry><entry><title type="html">Poland’s cozy cold</title><link href="http://localhost:4000/2020/02/15/cozy-cold-Poland.html" rel="alternate" type="text/html" title="Poland’s cozy cold" /><published>2020-02-15T00:00:00-06:00</published><updated>2020-02-15T00:00:00-06:00</updated><id>http://localhost:4000/2020/02/15/cozy-cold-Poland</id><content type="html" xml:base="http://localhost:4000/2020/02/15/cozy-cold-Poland.html">&lt;div style=&quot;text-align: justify&quot;&gt; 
 &lt;p&gt;
-The things I felt when I made my first international trip was excitement, loneliness and cold.
-&lt;/p&gt;&lt;p&gt;
-Last December I made my first trip ever to a new country: Poland. This was also my first time taking a flight and my first time taking vacations after I started working for the industry. You might thinkg it wasn't the best idea to go on winter vacations alone to such a cold place, let alone if you come from a warm place like Mexico (Although winter can be pretty cold here as well). And it might be true, from a &quot;comfortable&quot; perspective, it would have been a better idea to go to a sunny place like the beach, or maybe a more touristic location. Instead I decided to go alone to the city of Poznan, capital of the Greater Poland.&lt;/p&gt;&lt;/div&gt;
+Last December I made my first trip ever to a new country: Poland. This was also my first time taking a flight and my first time taking vacations after I started working as a developer. I decided to go alone on a trip to the city of Poznan, capital of the Greater Poland.&lt;/p&gt;&lt;/div&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/images/ratusz.jpeg&quot; alt=&quot;SSD1351&quot; class=&quot;img-responsive&quot; width=&quot;400px&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/images/ratusz.jpeg&quot; alt=&quot;Ratusz&quot; class=&quot;img-responsive&quot; width=&quot;400px&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;why-poland&quot;&gt;Why Poland?&lt;/h2&gt;
 &lt;div style=&quot;text-align: justify&quot;&gt; &lt;p&gt;
-This is the first question I got from almost every Pole I've talked with: &quot;Why Poland?&quot;. This broke my heart a bit, as I felt Poles were implying that their country is neither a beautiful nor an interesting place to visit compared to the rest of the world. Of course this is not true, and although many Poles love their country, to my perception, it's bit of a hidden place in terms of tourism.&lt;/p&gt; &lt;/div&gt;
+When I say I want to visit Poland, this is the first question I get from almost every Pole I&apos;ve talked to: &quot;Whyyy?&quot;. Sometimes I feel like Poles imply that their country is neither a beautiful nor an interesting place to visit compared to the rest of the world, or to the rest of Europe, which of course isn&apos;t true.&lt;/p&gt; &lt;/div&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/images/colorPoznan.jpeg&quot; alt=&quot;SSD1351&quot; class=&quot;img-responsive&quot; width=&quot;400px&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/images/colorPoznan.jpeg&quot; alt=&quot;Poznan&quot; class=&quot;img-responsive&quot; width=&quot;400px&quot; /&gt;&lt;/p&gt;
 &lt;div style=&quot;text-align: justify&quot;&gt; &lt;p&gt;
-As a nerd, my first interest in Poland sparked since I started playing The Witcher games. I was amazed at how different the first game felt compared to your average fantasy roleplaying-game. Sure it's still some kind of Tolkien-ish fantasy, however, the monsters, the story, and the whole mood of the game felt like a breath of fresh air. I had to discover where did this come from.&lt;/p&gt;
+As a nerd, my first interest in Poland sparked when I started playing The Witcher games. I was amazed at how different the first game felt compared to your average fantasy RPG. Sure it&apos;s still some kind of European medieval fantasy game, but the monsters, the story, and the whole mood of the game feel like a breath of fresh air. I had to figure out where this game came from!&lt;/p&gt;
 
-&lt;p&gt;After getting to know how was the game developed, and a bit about the history of Poland, I became engaged to getting to know this place even better. I started planning on visiting this country on my first vacations, which would be around holidays so I could stay ther as long as I could without quitting my job or something. It took me a year of waiting, a time during I started learning the language. Although the words in Polish can look intimidating; like &quot;chrząszcz&quot;, it's a rather easy language to pronounce for someone from Mexico, since most of the consonats have equivalent sounds in spanish. After almost a year of self study and some months aided by a Polish teacher, I was able to make simple and slow conversations, nothing too fancy, but something that would help me get out of trouble.&lt;/p&gt;
+&lt;p&gt;After getting to know more about the origins of the game, and a bit about the history of Poland, I became so interested in getting to know this place even better. I started planning on visiting this country for my first vacations, which would be around December holidays so I could stay there as long as I could without having to quit my job. I waited for a year, during which I finally got to study the Polish language seriously. Although some of the words in Polish can look intimidating, like &quot;chrząszcz&quot;, it&apos;s a rather easy language to pronounce for someone from Mexico, since most of the letters have equivalent sounds in spanish, you just have to get used to pronouncing a bunch of consonants together. After almost a year of self study and a couple of months aided by my Polish teacher, I was able to handle simple and slow conversations, nothing too fancy, but something that would help me get out of trouble and connect with a few people.&lt;/p&gt;
 &lt;/div&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/images/witcher.jpeg&quot; alt=&quot;SSD1351&quot; class=&quot;img-responsive&quot; width=&quot;400px&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/images/witcher.jpeg&quot; alt=&quot;Witcher&quot; class=&quot;img-responsive&quot; width=&quot;400px&quot; /&gt;&lt;/p&gt;
 &lt;div style=&quot;text-align: justify&quot;&gt; 
 
-&lt;p&gt;If I were to repeat this trip with my current level of Polish language, I would feel more afraid than I felt before. In my imagination I overestimated my Polish proficiency, thinking that I would be able to understand every single word that came out from native speakers or people on the streets.&lt;/p&gt;
+&lt;p&gt;If I were to repeat this trip with my current level of Polish, I would feel more afraid than I felt before. I seriously overestimated my Polish proficiency, thinking that I would be able to understand every single word that came out of native speakers. I was not expecting to not understand people talking around me!&lt;/p&gt;
 &lt;/div&gt;
 
 &lt;h2 id=&quot;getting-to-know-the-winter&quot;&gt;Getting to know the winter&lt;/h2&gt;
 &lt;div style=&quot;text-align: justify&quot;&gt; 
 
-&lt;p&gt;As someone from a tropical birthplace, I had never really experienced a typical movie-like winter season, the ones where the trees die, the clouds are always covering the sun, and the cold can kill you if you don't wear the appropiate clothes.&lt;/p&gt;
+&lt;p&gt;As someone from a tropical birthplace, I had never really experienced a classic movie-like winter season, those ones where the trees die, the clouds are always covering the sun, and the cold can kill you if you don&apos;t wear the appropiate clothes. In my city, winter usually looks like a cool and dry summer which might sound crazy for people who live far from the equator.&lt;/p&gt;
 
-&lt;p&gt;So, after almost 20 hours of traveling, I finally arrived to Poland. The first time I heard polish I felt happy, as if I was at home. I had been hearing people talking in german for about 18 hours, and I don't know german at all. However, as I started hearing this first polish conversation, some kind of fear also started growing on me since I only understood around 20% of what people were saying. I instantly knew I could have some trouble using a service, asking for food, or just trying to chat with Poles. &lt;/p&gt;
+&lt;p&gt;After almost 20 hours of traveling, I finally arrived to Poland. The first time I heard Polish I felt happy, as if I was at home. I had been hearing people talking in german for about 18 hours, and I don&apos;t know german at all. However, as I started hearing this first Polish conversation, I also started panicking a bit when I noticed I only understood around 20% of what people were saying, maybe even less! I instantly knew I could have some issues using a service, asking for food, or just trying to chat with Poles. &lt;/p&gt;
 &lt;/div&gt;
-&lt;p&gt;&lt;img src=&quot;/assets/images/walk.jpeg&quot; alt=&quot;SSD1351&quot; class=&quot;img-responsive&quot; width=&quot;400px&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/images/walk.jpeg&quot; alt=&quot;Walk&quot; class=&quot;img-responsive&quot; width=&quot;400px&quot; /&gt;&lt;/p&gt;
 
 &lt;div style=&quot;text-align: justify&quot;&gt; 
-&lt;p&gt;When I arrived to Poznan airport, I saw this grey cold winter weather I've never seen before. It was something exciting, yet also daunting. Everything was new to me, and I felt like I was a child who got lost. Also, the airport was lonely, and a bit dark since not all the lights were turned on. No familiar faces, no native languages, everyone was tall and white. So then a concerning thought crossed my mind: &quot;Where the heck did I come to?&quot;.&lt;/p&gt;
+&lt;p&gt;When I arrived to the airport, I saw this grey cold winter weather I&apos;ve never seen before. It was something exciting, yet also daunting. Everything was so new to me, and I felt like I was a child who got lost. Also, the airport was lonely, and a bit dark since not all the lights were turned on, it was a quiet time for tourism. No familiar faces, no native languages, everyone was so tall and white! Not that there aren&apos;t any tall or white people in Mexico, it&apos;s just that it was the fist time I didn&apos;t really fit among the crowd.&lt;/p&gt;
 
-&lt;p&gt;I could have been more comfortable going to almost anywhere in Mexico, and even more comfortable if I just stayed at home playing games from my bed all day long. I knew I wasn't going to feel comfortable, but I wasn't sure what to expect either.&lt;/p&gt;
+&lt;p&gt;It&apos;s true I could have been more comfortable going to almost anywhere else in Mexico, and even more comfortable if I just stayed at home playing games from my bed all day long. I knew I wasn&apos;t going to feel comfortable, but I wasn&apos;t sure what to expect from traveling abroad either.&lt;/p&gt;
 
-&lt;p&gt;So then I went and stayed at a hostel, expecting to make new friends who would share with me a lot of interesting stories about how they travel around the world and what they like about Poland. Yeah, I was wrong. For the most part I stayed alone in a bedroom for six people. The first night was so cold, and I had no idea how warmers worked so I didn't bother to turn them on (Yeah, I can be that stupid). That first night I met an Ukrainian guy, and we talked for a while. He was on his way to Ukraine to visit his family for New Year's Eve.&lt;/p&gt;&lt;/div&gt;
+&lt;p&gt;So then I stayed at a hostel, expecting to make new friends who would share with me a lot of interesting stories about how they travel around the world and what they like about Poland. Silly me, as I mentioned this was a quiet season for tourism and I could barely talk with Poles, ha! For the most part I stayed alone in a bedroom for six people. The first night was so cold, and I had no idea how warmers worked so I didn&apos;t bother to turn them on (Yeah, I can be that stupid). The first day I met an cool Ukrainian guy, and we talked for a while in English and then he went on his way to Ukraine to visit his family for New Year&apos;s Eve.&lt;/p&gt;&lt;/div&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/images/zamek.jpeg&quot; alt=&quot;SSD1351&quot; class=&quot;img-responsive&quot; width=&quot;400px&quot; /&gt;&lt;/p&gt;
-
-&lt;div style=&quot;text-align: justify&quot;&gt; 
-
-&lt;p&gt;The next day, jetlag hit me pretty hard and amplified my anxiety, I didn't have the energy to get up from bed and start walking around the city. The sun set around 4pm and it was too cold outside, so I felt like sleeping a lot the first three days of my vacations. Also I had this weird feeling about being &quot;no one&quot; outside of Mexico, as if my enviroment dictated who I am.&lt;/p&gt;
-
-&lt;p&gt;At the hostel, I also met a Peruvian guy that just moved from Spain to Poland and enjoyed to spend his free nights at Poznan, and an old Polish man who tried to flirt with me, LOL.&lt;/p&gt;
-
-&lt;p&gt;Then I moved out of the hostel and stayed at an hotel for the rest of my vacations. On the way to the hotel I felt a bit misserable, I felt like I was wasting my vacations, in the same fashion as I felt about wasting my free time in Mexico. I was pretty much on bed all day long, going out to get to know the old town just ocassionally. I missed my family, my friends and being in a place where I would have no trouble communicating. &lt;/p&gt;
-&lt;/div&gt;
-
-&lt;h2 id=&quot;i-was-carrying-the-sunny-weather-with-me-all-the-time&quot;&gt;I was carrying the sunny weather with me all the time&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/images/zamek.jpeg&quot; alt=&quot;Zamek&quot; class=&quot;img-responsive&quot; width=&quot;400px&quot; /&gt;&lt;/p&gt;
 
 &lt;div style=&quot;text-align: justify&quot;&gt; 
-&lt;p&gt;At the hotel I got used to the schedule change and things started to look brighter for me. This time the breakfast was nice, I felt more privacy, practiced talking Polish with people, and I got to know the city better. I also met a guy from Mexico who was also on vacations, he was visiting his sister who already lived in Poland. This helped me a lot since we went out to eat some delicious pierogi, meet a Polish friend of his, and I got to talk plenty of Spanish. Also, in the next days I would meet for the first time with my best Polish friend with whom I had been talking for almost a year now. This is the time when my anxiety levels started to drop and something clicked on my head; I'm just the same old me, and maybe even a more interesting and well-rested version of me in Poland. Wherever I get to go, I don't depend on my surroundings to define who I am.&lt;/p&gt;
+
+&lt;p&gt;The next day, I started feeling sick, jetlag hit me pretty hard and amplified my anxiety, I just didn&apos;t have the energy to get up from bed and start walking around the city. The sunset happened around 3:30pm and it was too cold outside, so I felt like sleeping a lot for the first three days of my vacations, what a waste. Also I started having this weird feeling about being &quot;no one&quot; outside of Mexico, as if my enviroment dictated who I was.&lt;/p&gt;
+
+&lt;p&gt;At the hostel, I met a Peruvian guy that just moved from Spain to Poland and enjoyed to spend his free nights at Poznan, and an old Polish guy who tried to flirt with me and complimented my brown skin for the first time, haha I didn&apos;t know I was so exotic!&lt;/p&gt;
+
+&lt;p&gt;Then I moved out of the hostel and stayed at a hotel for the rest of my stay. On the way to the hotel I felt a bit misserable, I felt like I was wasting my vacations, in the same fashion as I felt about wasting my free time in Mexico. I had been sick with a flu and sleeping almost all day long, going out to get to know the old town just ocassionally. I started missing my family, my friends and being in a place where I would have no stress communicating with people. &lt;/p&gt;
 &lt;/div&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/images/churchWow.jpeg&quot; alt=&quot;SSD1351&quot; class=&quot;img-responsive&quot; width=&quot;400px&quot; /&gt;&lt;/p&gt;
-&lt;div style=&quot;text-align: justify&quot;&gt; 
-
-&lt;p&gt;During my stay I got to know even more of the city, like several plazas, some parks, churches, a lovely neighborhood next to an island surrounded by two rivers. All of this would eventually lead to me getting used to Poznan and having the best time I've had in almost two years or so. I must say Poznan is a beautiful city, so much different than Mexico, and I kind of fell in love with it even if I was in such a grey season. Poznan has big old buildings full of history, wide roadwalks, bycicle roads, a lot of trees, great parks, two beautiful wide rivers, amazing churches, and way more things to discover that I didn't get to know.&lt;/p&gt;
-
-&lt;p&gt;The people is also nice and hospitable, although from a western perspective they're often described as cold, which is unfair since they're still gentle people and really warm as anyone else once you get to know them better. As an introvert, this was no problem for me, however, I can understand how extroverts would need a bit more of excitement from social interactions.&lt;/p&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;img src=&quot;/assets/images/island.jpeg&quot; alt=&quot;SSD1351&quot; class=&quot;img-responsive&quot; width=&quot;400px&quot; /&gt;&lt;/p&gt;
+&lt;h2 id=&quot;getting-used-to-a-new-environment&quot;&gt;Getting used to a new environment&lt;/h2&gt;
 
 &lt;div style=&quot;text-align: justify&quot;&gt; 
-&lt;p&gt;I was starting to feel at home, and sadly I had to go back to Mexico soon. I said goodbye and came back to my dear country after almost 15 days of vacations. Neither my back, nor my neck hurted, I had rested well and I kind of forgot how stressed and anxious I would feel on a daily basis. After all, even if I had a bit of a hard time on winter, I miss Poland, and I threaten to go back and get to know the rest of the cities I couldn't visit like Cracow, Wroclaw, Zakopane and Warsaw. Poland has something special that feels really personal to me. However, I think I would go back on a sunnier weather to be able to stay longer on the outside and see all the beautiful natural landscapes Poland has to offer.&lt;/p&gt;
+&lt;p&gt;At the hotel I got used to the hour difference and things started to look brighter for me. The breakfast at the hotel was nice, practiced talking Polish with some random people, and I got to know Poznan better. Also I met a guy from Mexico who was on vacations too, he was visiting his sister who already lived in Poland. We went out to eat some pierogi, meet a Polish friend of his, and I got to talk plenty of spanish. In the following days I would meet with my best Polish friend with whom I had been talking for almost a year now. Around this time my anxiety started to drop and something clicked on my head; I&apos;m just the same old me, and maybe even a more interesting and well-rested version of me in Poland and wherever I go.&lt;/p&gt;
+&lt;/div&gt;
 
-&lt;p&gt;I do recommend visiting Poland, especially when it's not winter. However, I need to advice you to get to know a bit of the language before going. Athough most people talk english very well, some others don't, especially if it's the older generation. Also, if it's your first time travelling, be prepared to experience some new feelings, both good and bad. But remember that at the end everything will be Ok, as humans, we can adapt to social change and eventually grow from it.&lt;/p&gt;
-&lt;/div&gt;</content><author><name>Jaime Centeno</name></author><summary type="html">The things I felt when I made my first international trip was excitement, loneliness and cold. Last December I made my first trip ever to a new country: Poland. This was also my first time taking a flight and my first time taking vacations after I started working for the industry. You might thinkg it wasn't the best idea to go on winter vacations alone to such a cold place, let alone if you come from a warm place like Mexico (Although winter can be pretty cold here as well). And it might be true, from a &quot;comfortable&quot; perspective, it would have been a better idea to go to a sunny place like the beach, or maybe a more touristic location. Instead I decided to go alone to the city of Poznan, capital of the Greater Poland.</summary></entry><entry><title type="html">Embedding sprites with the aid of Python</title><link href="http://localhost:4000/2019/09/29/sprite-support.html" rel="alternate" type="text/html" title="Embedding sprites with the aid of Python" /><published>2019-09-29T00:00:00-05:00</published><updated>2019-09-29T00:00:00-05:00</updated><id>http://localhost:4000/2019/09/29/sprite-support</id><content type="html" xml:base="http://localhost:4000/2019/09/29/sprite-support.html">&lt;p&gt;After finishing and adding support for my &lt;a href=&quot;https://github.com/Gecko05/SSD1351-Driver-Library&quot;&gt;OLED display library&lt;/a&gt; I decided to move on to the gaming section. This time I would embed sprite support into the library and a way to import sprites into the MCU flash memory, since it can be really tedious to write “by hand” all of the sprites.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/images/churchWow.jpeg&quot; alt=&quot;Church&quot; class=&quot;img-responsive&quot; width=&quot;400px&quot; /&gt;&lt;/p&gt;
+&lt;div style=&quot;text-align: justify&quot;&gt; 
+
+&lt;p&gt;During my stay I got to know even more of the city, like several plazas, some parks, churches, a lovely neighborhood next to an island surrounded by two rivers. This would eventually lead to me getting used to Poznan and having the best time I&apos;ve had in more than two years. Poznan is a beautiful city, so much different than cities in Mexico, and I kind of fell in love with it even if it was in such a grey season. Poznan has big old buildings full of history, amazingly wide roadwalks, bycicle roads, a lot of trees, great parks, two beautiful wide rivers, amazing churches, and many other things I didn&apos;t have the time to discover.&lt;/p&gt;
+
+&lt;p&gt;From a western perspective Poles are often described as cold, which is unfair since they&apos;re gentle and hospitable people, and as warm as anyone else in Mexico once you get to know them better. It&apos;s true that they seem to be more introvert than Mexicans, however, I&apos;m an introvert! So I felt just like at home.&lt;/p&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/island.jpeg&quot; alt=&quot;Island&quot; class=&quot;img-responsive&quot; width=&quot;400px&quot; /&gt;&lt;/p&gt;
+
+&lt;div style=&quot;text-align: justify&quot;&gt; 
+&lt;p&gt;I really liked this place, and sadly I had to go back to Mexico. I said goodbye and came back to my dear country after almost 15 days of vacations. My neck and back pains went away, I had rested really well and I kind of forgot how stressed and anxious I could feel on a daily basis. After all, even if I had a bit of a hard time at the beginning, I miss Poland so much, and I want to go back and get to know the rest of the cities I couldn&apos;t visit like Cracow, Wroclaw, Gdansk, Lublin and Warsaw. Whenver I talk about Poland I have this nostalgic feeling and reminisce about good memories. The next time I visit Poland, I might go back during a sunnier weather to be able to stay longer on the outside and see all the beautiful natural landscapes Poland has to offer.&lt;/p&gt;
+
+&lt;p&gt;I recommend visiting Poland a lot, especially if you haven&apos;t been to Europe yet, however, I need to advice you to get to know a bit of the language before going and having a well defined vacation plan. Athough most people speak english, some others don&apos;t, especially older generations. If it&apos;s your first time travelling, be prepared to experience some new feelings, both good and bad. If you&apos;re struggling getting used to a new culture, remember that everything will be OK and we can all adapt to social changes, you&apos;ll eventually grow from the experience.
+
+Do zobaczenia, Polska :)!&lt;/p&gt;
+&lt;/div&gt;</content><author><name>Jaime Centeno</name></author><summary type="html">Last December I made my first trip ever to a new country: Poland. This was also my first time taking a flight and my first time taking vacations after I started working as a developer. I decided to go alone on a trip to the city of Poznan, capital of the Greater Poland.</summary></entry><entry><title type="html">Embedding sprites with the aid of Python</title><link href="http://localhost:4000/2019/09/29/sprite-support.html" rel="alternate" type="text/html" title="Embedding sprites with the aid of Python" /><published>2019-09-29T00:00:00-05:00</published><updated>2019-09-29T00:00:00-05:00</updated><id>http://localhost:4000/2019/09/29/sprite-support</id><content type="html" xml:base="http://localhost:4000/2019/09/29/sprite-support.html">&lt;p&gt;After finishing and adding support for my &lt;a href=&quot;https://github.com/Gecko05/SSD1351-Driver-Library&quot;&gt;OLED display library&lt;/a&gt; I decided to move on to the gaming section. This time I would embed sprite support into the library and a way to import sprites into the MCU flash memory, since it can be really tedious to write “by hand” all of the sprites.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/assets/gifs/zero.gif&quot; alt=&quot;Zero&quot; class=&quot;img-responsive&quot; width=&quot;600px&quot; caption=&quot;A megaman X animation&quot; /&gt;&lt;/p&gt;
 
